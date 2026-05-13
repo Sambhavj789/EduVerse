@@ -1,0 +1,33 @@
+LMS Project – Eduverse
+
+The platform will have two types of users:
+1. Teacher
+2. Student
+
+Teacher Features
+Create and manage courses
+Create modules and chapters
+Upload lectures with:
+Video lectures
+Text notes
+PDF / Code files / Study material
+Create quizzes for students
+Track each student’s performance and progress
+
+Student Features
+Join enrolled courses
+Watch lectures and access study material
+Mark lectures as completed
+Attempt quizzes
+Generate AI-based practice quizzes
+Track personal course progress and performance
+Receive an automatically generated certificate after course completion
+
+Main Modules
+Authentication System
+Course Management
+Lecture Management
+Quiz System
+Progress Tracking
+AI Quiz Generator
+Certificate Generation
