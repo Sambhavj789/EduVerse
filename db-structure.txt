@@ -1,0 +1,158 @@
+# 1. User Model
+
+{
+   _id,
+   fullName,
+   email,
+   password,
+   role: student || teacher || admin,
+   profileImage,
+   bio,
+   createdAt,
+   updatedAt
+}
+
+# 2. Course Model
+
+{
+   _id,
+   title: String,
+   description: String,
+   thumbnail: String,
+   trailerVideo: String,
+   category: String,
+   level: "beginner" | "intermediate" | "advanced",
+   language: String, 
+   teacher: ObjectId,
+   modules: [ObjectId],
+   requirements: [String],
+   learningOutcomes: [String],
+   totalDuration: Number, E.g: 120hr
+   totalLectures: Number,
+   totalStudents: Number,
+   createdAt,
+   updatedAt
+}
+
+# 3. Module Model
+
+{
+   _id,
+   course: ObjectId,
+   title: String,
+   order: Number,
+   chapters: [ObjectId],
+   createdAt
+}
+
+# 4. Chapter Model
+
+{
+   _id,
+   module: ObjectId,
+   title: String,
+   order: Number,
+   lectures: [ObjectId],
+   createdAt
+}
+
+# 5. Lecture Model
+
+{
+   _id,
+   chapter: ObjectId,
+   title: String,
+   description: String,
+   order: Number,
+   duration: Number, E.g.: 2hrs
+   thumbnail: String,
+   videoUrl: String,
+   textContent: String,
+   materials:[
+   {
+      title,
+      fileUrl,
+      type E.g: Pdf,txt,js,etc
+   }
+],
+   quizzes: [ObjectId],
+   createdAt
+}
+
+# 6. Quiz Model
+
+{
+   _id,
+   lecture: ObjectId,
+   title: String,
+   totalMarks: Number,
+   difficulty:
+      "easy" | "medium" | "hard",
+   questions: [
+      {
+         question: String,
+         options: [String],
+         correctAnswer: String,
+         explanation: String,
+         marks: Number
+      }
+   ],
+
+   createdAt
+}
+
+# 7. Enrollment Model
+
+{
+   _id,
+   student: ObjectId,
+   course: ObjectId,
+   enrolledAt,
+   progressPercentage
+}
+
+# 8. Progress Model
+
+{
+   _id,
+   student: ObjectId,
+   course: ObjectId,
+   completedLectures: [ObjectId],
+   completedQuizzes: [
+      {
+         quiz: ObjectId,
+         score: Number,
+         attemptedAt
+      }
+   ],
+   overallProgress: Number,
+   createdAt,
+   updatedAt
+}
+
+9. AI Quiz
+
+{
+   _id,
+   student: ObjectId,
+   lecture: ObjectId,
+   difficulty:
+      "easy" | "medium" | "hard",
+   questions:[
+      {
+         question,
+         options,
+         correctAnswer,
+         explanation
+      }
+   ],
+   score:Number,
+   attemptedAt,
+   createdAt
+}
+
+For foreign key(Course Teacher field example):
+teacher: {
+type: mongoose.Schema.Types.ObjectID,
+ref:"users"
+}

@@ -1,0 +1,34 @@
+backend
+|---src (Main root folder)
+     |
+      ---- config (all configuration related files like db.js)
+     |
+     ---- routes (all routes files)
+     |
+     ---- controllers (all function to handle route are here)
+     |
+     ---- models (all database tables)
+     |
+     ---- utils (all utilities like uploading etc) E.g upload.js (For file upload using multer lib)
+     |
+     ---- handlers (global handler function like asyncHandler)
+     |
+     ---- middlewares (all middlewares are defined in this file like authMiddleware etc)
+     |
+     ---- validators (to validate request from frontend)
+     |
+     ---- services (to handle all different services)
+
+Required libraries:
+express: For making server/apis
+mongoose: For dealing with database
+cors: For cross origin resource sharing
+jwt(jsonwebtoken): For generating token to authenticate user 
+bcrypt: For password hashing
+multer: For file upload
+cookie-parser: For dealing with cookies
+nodemon: For restarting server on change
+dotenv: For getting values of environment varaibales
+
+Command to install all depedencies (inside backend)
+npm i express mongoose cors jsonwebtoken bcrypt multer cookie-parser nodemon dotenv
