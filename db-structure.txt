@@ -108,7 +108,6 @@
    student: ObjectId,
    course: ObjectId,
    enrolledAt,
-   progressPercentage
 }
 
 # 8. Progress Model
@@ -122,6 +121,7 @@
       {
          quiz: ObjectId,
          score: Number,
+         quizType: String (normal | ai)
          attemptedAt
       }
    ],
@@ -136,6 +136,7 @@
    _id,
    student: ObjectId,
    lecture: ObjectId,
+   title: String,
    difficulty:
       "easy" | "medium" | "hard",
    questions:[
@@ -146,7 +147,8 @@
          explanation
       }
    ],
-   score:Number,
+   totalMarks:Number,
+   score: Number,
    attemptedAt,
    createdAt
 }

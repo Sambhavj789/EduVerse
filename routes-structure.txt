@@ -1,0 +1,5 @@
+AuthRoutes: 
+POST : /register : To register student and teacher
+POST : /login : To login teacher and student
+POST : /logout : TO logout user by deleting the token from cookies
+GET: : /me    : TO get user information
