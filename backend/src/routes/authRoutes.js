@@ -1,8 +1,11 @@
 const express = require("express");
 const { register, login, logout, getMe } = require("../controllers/authController");
+const asyncHandler = require("../handlers/asyncHandler");
+const authMiddleware = require("../middlewares/authMiddleware");
+const upload = require("../utils/upload");
 const router = express.Router();
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", logout);
-router.get("/me", getMe);
+router.post("/register", upload.single("profileImage"), asyncHandler(register));
+router.post("/login", asyncHandler(login));
+router.post("/logout", asyncHandler(authMiddleware), asyncHandler(logout));
+router.get("/me", asyncHandler(authMiddleware), asyncHandler(getMe));
 module.exports = router;
