@@ -6,6 +6,7 @@ const connectToDB = require("./config/db");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 const app = express();
 connectToDB();
 app.use(cors({
@@ -19,6 +20,7 @@ app.get("/health", (req, res) => {
     res.send("<h1>Server Is Running Perfectly</h1>");
 })
 app.use("/api/v1/auth", authRoutes); // Using routes defined in authRoutes file
+app.use("/api/v1/course", courseRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

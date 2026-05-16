@@ -3,3 +3,13 @@ POST : /register : To register student and teacher
 POST : /login : To login teacher and student
 POST : /logout : TO logout user by deleting the token from cookies
 GET: : /me    : TO get user information
+
+CourseRoutes:
+POST : /create : To create a new course
+PUT : /update : To update a course
+GET : /all : To get all courses with filter and pagination
+GET : /:courseId : To get a single course
+DELETE : /:courseId : To delete a course
+
+ModuleRoutes:
+POST : /create : To create a new module 
