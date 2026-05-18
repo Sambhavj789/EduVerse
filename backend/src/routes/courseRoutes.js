@@ -6,7 +6,7 @@ const teacherProtectedMiddleware = require("../middlewares/teacherProtectedMiddl
 const router = express.Router();
 const upload = require("../utils/upload");
 router.post("/create",
-    asyncHandler(authMiddlware),
+    asyncHandler(authMiddleware),
     asyncHandler(teacherProtectedMiddleware),
     upload.fields([{ name: "thumbnail", maxCount: 1 }, { name: "trailerVideo", maxCount: 1 }]),
     asyncHandler(createCourse));
