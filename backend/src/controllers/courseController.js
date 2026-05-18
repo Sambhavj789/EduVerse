@@ -46,7 +46,7 @@ async function getAllCourses(req, res) {
         filter.title = { $regex: search, $option: "i" };
     }
     const courses = await Course.find(filter).skip(skip).limit(limit);
-    const totalCourse = await Course.countDocuments();
+    const totalCourse = await Course.countDocuments(filter);
     return res.send({
         success: true, data: courses, pagination: {
             total: totalCourse,
@@ -71,4 +71,10 @@ async function deleteCourse(req, res) {
     return res.send({ success: true, message: "Course Deleted Successfully", response });
 }
 
-module.exports = { createCourse, updateCourse, getAllCourses, getSingleCourse, deleteCourse };
+async function getTeacherCourses(req, res) {
+    const teacherId = req.params.teacherId;
+    const allTeacherCourses = await Course.find({ teacher: teacherId });
+    return res.send({ success: true, message: "Success", data: allTeacherCourses });
+}
+
+module.exports = { createCourse, updateCourse, getAllCourses, getSingleCourse, deleteCourse, getTeacherCourses };

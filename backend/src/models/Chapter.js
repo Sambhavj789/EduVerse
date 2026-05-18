@@ -4,6 +4,6 @@ const chapterSchema = mongoose.Schema({
     title: { type: String, required: true },
     order: Number,
     lectures: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: "lecture" }], required: true, default: [] }
-}, { timestampts: true });
+}, { timestamps: true });
 const chapterModel = mongoose.model("chapters", chapterSchema);
 module.exports = chapterModel;

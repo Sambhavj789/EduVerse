@@ -24,17 +24,17 @@ async function login(req, res) {
     }
     const user = await User.findOne({ email: email });
     if (!user) {
-        return res.send(404).send({ success: false, message: "Email Or Password Is Invalid" });
+        return res.status(404).send({ success: false, message: "Email Or Password Is Invalid" });
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-        return res.send(404).send({ success: false, message: "Email Or Password Is Invalid" });
+        return res.status(404).send({ success: false, message: "Email Or Password Is Invalid" });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "7d"
     });
     // http Only cokkies : Cannot be accessed by user or hacker directly
-    res.cookie("token", token, {
+    res.cookies("token", token, {
         httpOnly: true,
         secure: process.env.MODE == "production",
         sameSite: process.env.MODE == "production" ? "none" : "lax",
@@ -44,7 +44,12 @@ async function login(req, res) {
 }
 
 async function logout(req, res) {
-    res.cookie("token", "", { maxAge: 0 });
+    res.cookies("token", "", {
+        httpOnly: true,
+        secure: process.env.MODE == "production",
+        sameSite: process.env.MODE == "production" ? "none" : "lax", 
+        maxAge: 0
+    });
     return res.send({ success: true, message: "Logout Successfully" });
 }
 

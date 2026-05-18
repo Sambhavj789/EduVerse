@@ -1,6 +1,6 @@
 const express = require("express");
 const asyncHandler = require("../handlers/asyncHandler");
-const { createCourse, updateCourse, getAllCourses, getSingleCourse, deleteCourse } = require("../controllers/courseController");
+const { createCourse, updateCourse, getAllCourses, getSingleCourse, deleteCourse, getTeacherCourses } = require("../controllers/courseController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const teacherProtectedMiddleware = require("../middlewares/teacherProtectedMiddleware");
 const router = express.Router();
@@ -27,5 +27,7 @@ router.delete("/:courseId",
     asyncHandler(authMiddleware),
     asyncHandler(teacherProtectedMiddleware),
     asyncHandler(deleteCourse));
+
+router.get("/teacher-coruses/:teacherId", asyncHandler(authMiddleware), asyncHandler(teacherProtectedMiddleware), getTeacherCourses);
 
 module.exports = router;

@@ -10,6 +10,16 @@ PUT : /update : To update a course
 GET : /all : To get all courses with filter and pagination
 GET : /:courseId : To get a single course
 DELETE : /:courseId : To delete a course
+GET : /teacher-coruses/:teacherId : To get all courses created by a Teacher
 
 ModuleRoutes:
-POST : /create : To create a new module 
+POST : / : To create a new module 
+PUT : / : To update module
+DELETE : / : To delete module
+GET : /:courseId : TO get all modules of a course
+
+ChapterRoutes:
+POST : / : To create a new module 
+PUT : / : To update module
+DELETE : / : To delete module
+GET : /:moduleId : TO get all modules of a course
