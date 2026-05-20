@@ -34,7 +34,7 @@ async function login(req, res) {
         expiresIn: "7d"
     });
     // http Only cokkies : Cannot be accessed by user or hacker directly
-    res.cookies("token", token, {
+    res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.MODE == "production",
         sameSite: process.env.MODE == "production" ? "none" : "lax",
@@ -44,7 +44,7 @@ async function login(req, res) {
 }
 
 async function logout(req, res) {
-    res.cookies("token", "", {
+    res.cookie("token", "", {
         httpOnly: true,
         secure: process.env.MODE == "production",
         sameSite: process.env.MODE == "production" ? "none" : "lax", 

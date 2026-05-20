@@ -11,5 +11,5 @@ router.put("/", asyncHandler(authMiddleware), asyncHandler(teacherProtectedMiddl
 
 router.delete("/", asyncHandler(authMiddleware), asyncHandler(teacherProtectedMiddleware), asyncHandler(deleteChapter));
 
-router.get("/:moduleId", asyncHandler(getChapters))
+router.get("/:moduleId", asyncHandler(getChapters));
 module.exports = router;

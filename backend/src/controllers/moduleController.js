@@ -50,7 +50,7 @@ async function deleteModule(req, res) {
     })
     return res.send({ success: true, message: "Module Delete Successfully" });
 }
-
+// 1 2 3 4
 async function getModules(req, res) {
     const courseId = req.params.courseId;
     const allModules = await Module.find({ course: courseId });
