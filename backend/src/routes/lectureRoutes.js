@@ -3,8 +3,9 @@ const router = express.Router();
 const asyncHandler = require("../handlers/asyncHandler");
 const authMiddleware = require("../middlewares/authMiddleware");
 const teacherProtectedMiddleware = require("../middlewares/teacherProtectedMiddleware");
-const { createLecture, manageMaterials, updateLecture, deleteLecture, getLectures, getSingleLecture } = require("../controllers/lectureController");
+const { createLecture, manageMaterials, updateLecture, deleteLecture, getLectures, getSingleLecture, streamVideo } = require("../controllers/lectureController");
 const upload = require("../utils/upload");
+const isCourseJoinedMiddleware = require("../middlewares/isCourseJoinedMiddleware");
 
 router.post("/",
     asyncHandler(authMiddleware),
@@ -36,5 +37,10 @@ router.get("/all/:chapterId",
 router.get("/:lectureId",
     asyncHandler(authMiddleware),
     asyncHandler(getSingleLecture));
+
+router.get("/video/stream/:lectureId",
+    asyncHandler(authMiddleware),
+    asyncHandler(isCourseJoinedMiddleware),
+    asyncHandler(streamVideo))
 
 module.exports = router;

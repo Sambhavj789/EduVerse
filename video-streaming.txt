@@ -1,0 +1,14 @@
+We don't send whole video to client at once, but send them in chunks
+
+Server :10gb Video ------> Client (Issues: Ram issue,Network Issue,Waiting time)
+We send video in chunks of like 1mb/2mb
+
+Adaptive Bitrate Streaming: We change quality of video according to client network,ram etc.
+
+50gb (4K)  ---> 50mb
+When video is stored in server, backend stores diffrent formats of video (240p,360p,720p,4K)
+
+Range:
+bytes = 10000-
+
+1000,000

@@ -10,4 +10,6 @@ router.post("/logout", asyncHandler(authMiddleware), asyncHandler(logout));
 router.get("/me", asyncHandler(authMiddleware), asyncHandler(getMe));
 module.exports = router;
 
-// Register API: http://localhost:4000/api/v1/auth/register
+// Register API: http://localhost:4000/api/v1/auth/register:
+// REQ: {fullName,email,password,role,}
+// RES: {success: true,message,userData}

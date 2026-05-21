@@ -18,7 +18,7 @@ const lectureSchema = mongoose.Schema({
         }],
         default: []
     },
-    quizes: { type: mongoose.Schema.Types.ObjectId, ref: "quizes", default: [] }
+    quizes: { type: [mongoose.Schema.Types.ObjectId], ref: "quizes", default: [] }
 }, { timestamps: true });
 const lectureModel = mongoose.model("lectures", lectureSchema);
 module.exports = lectureModel;

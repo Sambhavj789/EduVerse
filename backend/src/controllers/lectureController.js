@@ -1,6 +1,8 @@
 const Chapter = require("../models/Chapter");
 const Lecture = require("../models/Lecture");
 const lectureValidator = require("../validators/lectureValidator");
+const path = require("path");
+const fs = require("fs");
 
 async function createLecture(req, res) {
     const data = lectureValidator(req);
@@ -84,8 +86,50 @@ async function getLectures(req, res) {
 
 async function getSingleLecture(req, res) {
     const lectureId = req.params.lectureId;
-    const lecture = await Lecture.findById(lectureId);
+    const lecture = await Lecture.findById(lectureId).populate("quizes");
     return res.send({ success: true, message: "Success", data: lecture });
 }
+// helper function to get number inside a string
+function getNumber(text) {
+    let ans = "";
+    let valid = "0123456789";
+    for (let char of text) {
+        if (valid.includes(char)) {
+            ans += char;
+        }
+    }
+    return Number(ans);
+}
 
-module.exports = { createLecture, updateLecture, deleteLecture, getLectures, getSingleLecture, manageMaterials };
+async function streamVideo(req, res) {
+    const lectureId = req.params.lectureId;
+    const lecture = await Lecture.findById(lectureId);
+    if (!lecture) {
+        return res.status(404).send({ success: false, message: "Lecture Not Found" });
+    }
+    const videoUrl = lecture.videoUrl; // Video name
+    const videoPath = path.join(__dirname, "../../uploads", videoUrl);
+    const stat = fs.statSync(videoPath);
+    const fileSize = stat.size;
+    const range = req.headers.range; // bytes = 100000
+    if (!range) {
+        return res.status(400).send({ success: false, message: "Range is required" });
+    }
+    const CHUNK_SIZE = 10 ** 6; // 1mb
+    const start = getNumber(range);
+    const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
+    const contentLength = end - start + 1;
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}`,
+        "Accept-Range": "bytes",
+        "Content-Length": contentLength,
+        "Content-Type": "video/mp4"
+    }
+    res.writeHead(206, headers);
+    // 206 status code is used when we send patial data
+    const stream = fs.createReadStream(videoPath, { start: start, end: end });
+    stream.pipe(res);
+
+}
+
+module.exports = { createLecture, updateLecture, deleteLecture, getLectures, getSingleLecture, manageMaterials, streamVideo };
