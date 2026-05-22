@@ -1,0 +1,105 @@
+.hero {
+    padding: 60px;
+    display: flex;
+    gap: 40px;
+}
+.hero-right{
+    width: 60%;
+    height: 500px;
+    border-radius: 20px;
+    /* background-color: var(--white); */
+}
+
+.hero-left{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: start;
+}
+
+.hero-tag{
+    background-color: #edf4ff;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    gap: 5px;
+    font-size: 18px;
+    font-weight: 500;
+}
+.hero-tag>span:nth-child(1){
+    color: var(--primary);
+}
+.hero-heading>h1{
+    font-size: 72px;
+    list-style: 1.05;
+    font-weight: 800;
+}
+.hero-heading>h1>span{
+    color: var(--primary);
+}
+.hero-para{
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text-light);
+    max-width: 600px;
+}
+
+.hero-btn{
+    display: flex;
+    gap: 20px;
+}
+.hero-btn button{
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    color: var(--white);
+    background-color: var(--primary);
+    width: 150px;
+    cursor: pointer;
+}
+.explore>button{
+    background-color: white;
+    color: black;
+    border: 2px solid var(--border);
+}
+.students-info{
+    display: flex;
+    margin-top: 20px;
+}
+.students-info>img{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin-left: -5px;
+}
+.students-info>p{
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 20px;
+}
+
+.circle{
+    position: absolute;
+    background-color: var(--orange);
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+.circle-1{
+    top: 120px;
+    left: 20px;
+}
+.circle-2{
+    height: 35px;
+    width: 35px;
+    top: 600px;
+    left: 600px;
+    background-color: var(--purple);
+}
+.circle-3{
+    height: 25px;
+    width: 25px;
+    top: 120px;
+    left: 700px;
+    background-color: var(--green);
+}

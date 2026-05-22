@@ -1,0 +1,137 @@
+header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border);
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 40px;
+    height: 70px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.nav-links>ul {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+}
+
+.nav-links>ul>li>a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.nav-links>ul>li>.selected {
+    color: var(--primary);
+}
+
+.nav-right {
+    display: flex;
+    gap: 40px;
+}
+
+.search {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 10px;
+    gap: 10px;
+    font-size: 18px;
+    align-items: center;
+}
+
+.search-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.search>input {
+    border: none;
+    outline: none;
+    width: 200px;
+}
+
+.signup-btn {
+    text-decoration: none;
+    background-color: var(--primary-dark);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+.mobine-menu-button {
+    font-size: 28px;
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    display: none;
+}
+
+.mobile-menu {
+    padding: 20px 40px;
+    border-top: 1px solid var(--border);
+    display: none;
+}
+
+.mobile-nav-links>ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile-nav-links>ul>li>a {
+    text-decoration: none;
+    color: var(--text);
+}
+
+.mobile-search {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 10px;
+    gap: 10px;
+    font-size: 18px;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 25px;
+    max-width: 300px;
+}
+.mobile-search>input {
+    border: none;
+    outline: none;
+    width: 200px;
+}
+
+.mobile-signup-btn{
+    color: var(--text);
+    text-decoration: none;
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+@media (width <=1050px) {
+
+    .nav-links,
+    .nav-right {
+        display: none;
+    }
+
+    .mobine-menu-button {
+        display: block;
+    }
+
+    .mobile-menu{
+        display: block;
+    }
+}
