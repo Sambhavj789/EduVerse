@@ -1,4 +1,5 @@
 import "./Hero.css"
+import HeroImg from "../../assets/hero-image-2.png"
 function Hero() {
     return (
         <section className="hero">
@@ -35,7 +36,9 @@ function Hero() {
                     <p>50K+<br /><span>Active Students</span></p>
                 </div>
             </div>
-            <div className="hero-right"></div>
+            <div className="hero-right">
+                <img src={HeroImg} alt="" />
+            </div>
         </section>
     )
 }
