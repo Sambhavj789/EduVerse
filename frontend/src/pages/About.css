@@ -1,0 +1,275 @@
+.about-page {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+}
+
+/* HERO */
+
+.about-hero {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.about-hero-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.about-tag {
+    background: #edf4ff;
+    color: var(--primary);
+    width: fit-content;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+.about-hero-left h1 {
+    font-size: 70px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.about-hero-left h1 span {
+    color: var(--primary);
+}
+
+.about-hero-left p {
+    color: var(--text-light);
+    font-size: 18px;
+    line-height: 1.9;
+    max-width: 650px;
+}
+
+.about-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.about-buttons button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 18px;
+    background: var(--primary);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.about-buttons button:hover {
+    transform: translateY(-3px);
+}
+
+.secondary-btn {
+    background: white !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.about-hero-right {
+    flex: 1;
+}
+
+.about-image-card {
+    background: white;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.about-image-card img {
+    width: 100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+/* STATS */
+
+.about-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.stat-card h2 {
+    font-size: 42px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.stat-card p {
+    color: var(--text-light);
+    font-size: 18px;
+}
+
+/* MISSION */
+
+.mission-section {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+}
+
+.mission-left {
+    flex: 1;
+}
+
+.mission-left h2 {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.mission-left p {
+    color: var(--text-light);
+    line-height: 1.9;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.mission-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.mission-card {
+    background: white;
+    padding: 30px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+}
+
+.mission-card h3 {
+    margin-bottom: 12px;
+    font-size: 24px;
+}
+
+.mission-card p {
+    color: var(--text-light);
+    line-height: 1.8;
+}
+
+/* TEAM */
+
+.team-section {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.section-heading {
+    text-align: center;
+}
+
+.section-heading h2 {
+    font-size: 52px;
+    margin-bottom: 15px;
+}
+
+.section-heading p {
+    color: var(--text-light);
+    font-size: 18px;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.team-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: 0.3s;
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+}
+
+.team-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.team-card h3 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.team-card p {
+    color: var(--text-light);
+}
+
+/* RESPONSIVE */
+
+@media (width <= 1100px) {
+
+    .about-hero,
+    .mission-section {
+        flex-direction: column;
+    }
+
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (width <= 700px) {
+
+    .about-page {
+        padding: 30px 20px;
+        gap: 70px;
+    }
+
+    .about-hero-left h1 {
+        font-size: 42px;
+    }
+
+    .mission-left h2,
+    .section-heading h2 {
+        font-size: 36px;
+    }
+
+    .about-stats,
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .about-buttons button {
+        width: 100%;
+    }
+
+}

@@ -14,7 +14,7 @@ const app = express();
 connectToDB();
 app.use(express.json()); // To parse json from frontend
 app.use(cors({
-    origin: process.env.MODE == "production" ? process.env.FRONTEND_URL : "*",
+    origin: process.env.MODE == "production" ? process.env.FRONTEND_URL : true,
     credentials: true
 })); // Middleware to accept request from other server
 app.use(cookieParser()); // Middleware to parse client cokkies

@@ -36,7 +36,7 @@ function Header() {
                     <div className="search">
                         <FaSearch className="search-icon" /> <input type="text" placeholder="Search Courses" />
                     </div>
-                    <Link to="/signup" className="signup-btn">Signup/Join</Link>
+                    <Link to="/login" className="signup-btn">SignIn</Link>
                 </div>
 
                 <div className="mobine-menu-button">
@@ -60,7 +60,7 @@ function Header() {
                             <FaSearch className="search-icon" /> <input type="text" placeholder="Search Courses" />
                         </div>
 
-                        <Link to="/signup" className="mobile-signup-btn">Signup/Join</Link>
+                        <Link to="/login" className="mobile-signup-btn">Signin</Link>
                     </div>
                 </div>
             }
