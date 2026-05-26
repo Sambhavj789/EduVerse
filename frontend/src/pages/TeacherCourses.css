@@ -1,0 +1,180 @@
+.courses-page {
+  padding: 30px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+/* Header */
+
+.courses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+}
+
+.courses-header h1 {
+  font-size: 32px;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.courses-header p {
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.add-course-btn {
+  background-color: #2563eb;
+  color: white;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 14px 22px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.add-course-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Courses Grid */
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+/* Modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background-color: rgba(0,0,0,0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 1000;
+
+  padding: 20px;
+}
+
+.course-modal {
+  width: 100%;
+  max-width: 850px;
+
+  background-color: white;
+
+  border-radius: 24px;
+
+  padding: 28px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  font-size: 28px;
+  color: #111827;
+}
+
+.modal-header button {
+  border: none;
+  background: #f3f4f6;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  font-size: 18px;
+}
+
+/* Form */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 14px;
+
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+
+  font-size: 15px;
+
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.submit-btn {
+  width: 100%;
+
+  margin-top: 12px;
+
+  background-color: #2563eb;
+  color: white;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 16px;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ed8;
+}
