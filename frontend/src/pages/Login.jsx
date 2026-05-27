@@ -3,9 +3,12 @@ import "./Login.css";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../utils/api";
+import { useUser } from "../context/UserContext";
 
 function Login() {
     const [data, setData] = useState({ email: "", password: "" });
+    const { user, setUser } = useUser();
+
     function handleChange(e) {
         const { name, value } = e.target;
         setData({ ...data, [name]: value });
@@ -25,6 +28,7 @@ function Login() {
 
             if (response.data?.success) {
                 toast.success("Login Successfully");
+                setUser(response.data?.data);
             }
             else {
                 console.log(response);
@@ -81,7 +85,7 @@ function Login() {
                         </h1>
 
                         <p>
-                            Login to continue to LearnOS
+                            Login to continue to Eduverse
                         </p>
 
                         <form className="login-form" onSubmit={handleSubmit}>

@@ -15,7 +15,7 @@ async function createModule(req, res) {
     const newModuleData = await newModule.save();
     courseData.modules.push(newModuleData._id);
     await courseData.save();
-    return res.send({ success: true, message: "Module Created Successfully" });
+    return res.send({ success: true, message: "Module Created Successfully", data: newModuleData });
 
 }
 

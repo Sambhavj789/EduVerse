@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -7,19 +7,32 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Courses from "./pages/TeacherCourses";
+import TeacherLayout from "./layouts/TeacherLayout";
+import TeacherCourses from "./pages/TeacherCourses";
+import CourseModules from "./pages/CourseModules";
 function App() {
+
+  const pathName = document.location.pathname;
+  const isShowHeader = !pathName.includes("/teacher") && !pathName.includes("/student");
+
   return (
     <BrowserRouter>
-      <Header/>
+      {isShowHeader && <Header />}
       <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/about" element={<About/>} />
-        <Route path="/contact" element={<Contact/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register/>} />
-        <Route path="/teacher/course" element={<Courses/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Teacher Routes */}
+        <Route path="/teacher" element={<TeacherLayout />}>
+          <Route path="courses" element={<TeacherCourses />} />
+          <Route path="course-modules/:courseId" element={<CourseModules />} />
+        </Route>
+
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
   )
 }

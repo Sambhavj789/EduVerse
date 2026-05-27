@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./TeacherCourses.css";
-import Sidebar from "../components/TeacherSidebar";
+import api from "../utils/api";
+import toast from "react-hot-toast";
+import { useUser } from "../context/UserContext";
+import CourseCard from "../components/CourseCard";
+import {useNavigate} from "react-router-dom";
 
 const TeacherCourses = () => {
 
@@ -9,8 +13,8 @@ const TeacherCourses = () => {
     const [courseData, setCourseData] = useState({
         title: "",
         description: "",
-        thumbnail: "",
-        trailerVideo: "",
+        thumbnail: null,
+        trailerVideo: null,
         category: "",
         level: "beginner",
         language: "",
@@ -19,6 +23,26 @@ const TeacherCourses = () => {
         totalDuration: "",
         totalLectures: "",
     });
+    const [courses, setCourses] = useState([]);
+    const { user } = useUser();
+    const navigate = useNavigate();
+    async function getAllCoursesByTeacher() {
+        try {
+            const response = await api.get(`/course/teacher-courses/${user._id}`);
+            if (response.data?.success) {
+                console.log(response.data?.data);
+                setCourses(response.data?.data);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response.data?.message || "Internal Server Error");
+        }
+    }
+
+    useEffect(() => {
+        getAllCoursesByTeacher();
+    }, [])
 
     const handleChange = (e) => {
         setCourseData({
@@ -27,29 +51,55 @@ const TeacherCourses = () => {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
 
-        const finalData = {
-            ...courseData,
+            const finalData = {
+                ...courseData,
 
-            requirements: courseData.requirements
-                .split(",")
-                .map((item) => item.trim()),
+                requirements: courseData.requirements
+                    .split(",")
+                    .map((item) => item.trim()),
 
-            learningOutcomes: courseData.learningOutcomes
-                .split(",")
-                .map((item) => item.trim()),
-        };
-
-        console.log(finalData);
+                learningOutcomes: courseData.learningOutcomes
+                    .split(",")
+                    .map((item) => item.trim()),
+                teacher: user._id
+            };
+            const formData = new FormData();
+            for (let field in finalData) {
+                formData.append(field, finalData[field]);
+            }
+            const response = await api.post("/course/create", formData);
+            if (response.data?.success) {
+                toast.success(response.data?.message);
+                const newCourse = response.data?.courseData;
+                setCourses([...courses, newCourse]);
+            }
+            console.log(response);
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response.data?.message || "Internal Server Error");
+        }
 
         setShowModal(false);
     };
 
+    function handleFileChange(e) {
+        const name = e.target.name;
+        const file = e.target.files[0];
+        setCourseData({ ...courseData, [name]: file });
+    }
+
+    function handleCourseClick(data){
+        const courseId = data._id;
+        navigate(`/teacher/course-modules/${courseId}`);
+    }
+
     return (
         <>
-            <Sidebar />
             <div className="courses-page">
 
                 {/* Header */}
@@ -71,6 +121,11 @@ const TeacherCourses = () => {
 
                 {/* Courses Grid */}
                 <div className="courses-grid">
+                    {
+                        courses.map((data, index) => {
+                            return <CourseCard key={index} data={data} mode={"teacher"} onClick={()=>handleCourseClick(data)}/>
+                        })
+                    }
                 </div>
 
                 {/* Modal */}
@@ -123,11 +178,9 @@ const TeacherCourses = () => {
                                             <label>Thumbnail URL</label>
 
                                             <input
-                                                type="text"
+                                                type="file"
                                                 name="thumbnail"
-                                                placeholder="Enter thumbnail URL"
-                                                value={courseData.thumbnail}
-                                                onChange={handleChange}
+                                                onChange={handleFileChange}
                                                 required
                                             />
                                         </div>
@@ -136,11 +189,9 @@ const TeacherCourses = () => {
                                             <label>Trailer Video URL</label>
 
                                             <input
-                                                type="text"
+                                                type="file"
                                                 name="trailerVideo"
-                                                placeholder="Enter trailer video URL"
-                                                value={courseData.trailerVideo}
-                                                onChange={handleChange}
+                                                onChange={handleFileChange}
                                                 required
                                             />
                                         </div>

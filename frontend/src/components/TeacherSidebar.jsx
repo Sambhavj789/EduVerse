@@ -13,8 +13,11 @@ import {
   LogOut,
   GraduationCap,
 } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 const TeacherSidebar = () => {
+  const { user } = useUser();
+  const IMAGE_URL = `http://localhost:4000/uploads/${user?.profileImage}`;
   return (
     <div className="teacher-sidebar">
 
@@ -63,13 +66,13 @@ const TeacherSidebar = () => {
         <div className="teacher-profile">
 
           <img
-            src=""
+            src={IMAGE_URL}
             alt="teacher"
           />
 
           <div>
-            <h4>Teacher Name</h4>
-            <p>Computer Science</p>
+            <h4>{user?.fullname}</h4>
+            <p>{user?.bio}</p>
           </div>
 
         </div>

@@ -40,21 +40,21 @@ async function login(req, res) {
         sameSite: process.env.MODE == "production" ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
-    res.send({ success: true, message: "Login Successfully" });
+    res.send({ success: true, message: "Login Successfully", data: user });
 }
 
 async function logout(req, res) {
     res.cookie("token", "", {
         httpOnly: true,
         secure: process.env.MODE == "production",
-        sameSite: process.env.MODE == "production" ? "none" : "lax", 
+        sameSite: process.env.MODE == "production" ? "none" : "lax",
         maxAge: 0
     });
     return res.send({ success: true, message: "Logout Successfully" });
 }
 
 async function getMe(req, res) {
-    return res.send({ success: true, message: "Success", user: req.user });
+    return res.send({ success: true, message: "Success", data: req.user });
 }
 
 module.exports = { register, login, logout, getMe };

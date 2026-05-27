@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const moduleRoutes = require("./routes/moduleRoutes");
 const chapterRoutes = require("./routes/chapterRoutes");
+const path = require("path");
 
 const app = express();
 connectToDB();
@@ -18,6 +19,7 @@ app.use(cors({
     credentials: true
 })); // Middleware to accept request from other server
 app.use(cookieParser()); // Middleware to parse client cokkies
+app.use("/uploads",express.static(path.join(__dirname,"../uploads"))); // To server files uploaded
 
 app.get("/health", (req, res) => {
     res.send("<h1>Server Is Running Perfectly</h1>");

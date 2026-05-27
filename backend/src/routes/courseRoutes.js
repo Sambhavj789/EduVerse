@@ -28,6 +28,6 @@ router.delete("/:courseId",
     asyncHandler(teacherProtectedMiddleware),
     asyncHandler(deleteCourse));
 
-router.get("/teacher-coruses/:teacherId", asyncHandler(authMiddleware), asyncHandler(teacherProtectedMiddleware), getTeacherCourses);
+router.get("/teacher-courses/:teacherId", asyncHandler(authMiddleware), asyncHandler(teacherProtectedMiddleware), getTeacherCourses);
 
 module.exports = router;
