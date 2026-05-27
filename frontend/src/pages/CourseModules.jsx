@@ -29,7 +29,7 @@ function CourseModules() {
             if (response.data?.success) {
                 toast.success("Module Created Successfully");
                 const newModuleTitle = response.data?.data;
-                setModules([...modules,newModuleTitle])
+                setModules([...modules, newModuleTitle])
             }
         }
         catch (err) {
@@ -64,14 +64,35 @@ function CourseModules() {
                 </button>
 
             </div>
-            
+
             <div className="modules-grid">
-                    {
-                        modules.map((data, index) => {
-                            return <div className='module-card'>{data.title}</div>
-                        })
-                    }
-                </div>
+
+                {
+                    modules.map((data, index) => {
+
+                        return (
+                            <div
+                                className='module-card'
+                                key={index}
+                                onClick={() =>
+                                    navigate(`/teacher/course-content/${data._id}`)
+                                }
+                            >
+                                <h2>
+                                    {data.title}
+                                </h2>
+
+                                <p>
+                                    Manage chapters, lectures,
+                                    quizzes and resources
+                                </p>
+
+                            </div>
+                        )
+                    })
+                }
+
+            </div>
 
             {/* Modal */}
             {

@@ -10,6 +10,9 @@ import Courses from "./pages/TeacherCourses";
 import TeacherLayout from "./layouts/TeacherLayout";
 import TeacherCourses from "./pages/TeacherCourses";
 import CourseModules from "./pages/CourseModules";
+import CourseContent from "./pages/CourseContent";
+import LectureDetails from "./pages/LectureDetails";
+import QuizBuilder from "./components/QuizBuilder";
 function App() {
 
   const pathName = document.location.pathname;
@@ -29,6 +32,12 @@ function App() {
         <Route path="/teacher" element={<TeacherLayout />}>
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="course-modules/:courseId" element={<CourseModules />} />
+          <Route path="course-content/:moduleId" element={<CourseContent />} />
+          <Route path="lecture-detail/:lectureId" element={<LectureDetails />} />
+          <Route
+            path="quiz-builder/:lectureId"
+            element={<QuizBuilder />}
+          />
         </Route>
 
       </Routes>
