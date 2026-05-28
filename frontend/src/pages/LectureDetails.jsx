@@ -11,6 +11,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import toast from "react-hot-toast";
 
+const UPLOADS_URL = "http://localhost:4000/uploads/";
+
 function LectureDetails() {
 
     const [activeTab, setActiveTab] = useState("overview");
@@ -21,6 +23,7 @@ function LectureDetails() {
 
     const [quizTitle, setQuizTitle] = useState("");
     const [quizzes, setQuizzes] = useState([]);
+    const [chapterId, setChapterId] = useState("");
     const [lectureTitle, setLectureTitle] = useState("");
     const [lectureThumbnail, setLectureThumbnail] = useState(null);
     const [lectureDescription, setLectureDesciprtion] = useState("");
@@ -33,18 +36,13 @@ function LectureDetails() {
     const [resourceFile, setResourceFile] = useState(null);
 
     const [resources, setResources] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [savingResourceFileUrl, setSavingResourceFileUrl] = useState("");
 
     // Add Quiz
     function handleAddQuiz(e) {
         e.preventDefault();
-
-        const newQuiz = {
-            title: quizTitle
-        };
-
-        setQuizzes([...quizzes, newQuiz]);
-
-        setQuizTitle("");
+        navigate(`/teacher/quiz-builder/${lectureId}`);
     }
 
     // Add Resource
@@ -52,37 +50,103 @@ function LectureDetails() {
 
         e.preventDefault();
 
-        const newResource = {
-            title: resourceTitle,
-            type: resourceType,
-            text: resourceText,
-            file: resourceFile
-        };
+        if (resourceType === "text") {
+            handleSubmit();
+            return;
+        }
 
-        setResources([...resources, newResource]);
+        uploadResourceFile();
+    }
 
-        setResourceTitle("");
-        setResourceText("");
-        setResourceFile(null);
-        setResourceType("text");
+    async function uploadResourceFile() {
+        if (!resourceFile) {
+            toast.error("Choose a file first");
+            return;
+        }
+
+        try {
+            setSavingResourceFileUrl("uploading");
+            const formData = new FormData();
+            formData.append("lectureId", lectureId);
+            formData.append("title", resourceTitle || resourceFile.name);
+            formData.append("type", resourceType);
+            formData.append("materials", resourceFile);
+
+            const response = await api.post("/lectures/materials", formData);
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setResources(response.data?.data?.materials || []);
+                setResourceTitle("");
+                setResourceFile(null);
+                setResourceType("text");
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setSavingResourceFileUrl("");
+        }
+    }
+
+    async function handleUpdateResourceTitle(fileUrl, title) {
+        try {
+            setSavingResourceFileUrl(fileUrl);
+            const response = await api.put("/lectures/materials", { lectureId, fileUrl, title });
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setResources(response.data?.data?.materials || []);
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setSavingResourceFileUrl("");
+        }
+    }
+
+    async function handleDeleteResource(fileUrl) {
+        try {
+            setSavingResourceFileUrl(fileUrl);
+            const response = await api.delete("/lectures/materials", { data: { lectureId, fileUrl } });
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setResources(response.data?.data?.materials || []);
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setSavingResourceFileUrl("");
+        }
     }
 
     async function getLectureDetails() {
         try {
+            setLoading(true);
             const response = await api.get(`/lectures/${lectureId}`);
             if (response.data?.success) {
                 const data = response.data?.data;
+                setChapterId(data.chapter);
                 setLectureTitle(data.title);
                 setLectureDesciprtion(data.description);
                 setLectureDuration(data.duration);
                 setOldThumbnail(data.thumbnail);
                 setOldVideoUrl(data.videoUrl);
+                setResourceText(data.textContent || "");
+                setQuizzes(data.quizes || []);
+                setResources(data.materials || []);
                 console.log(response.data?.data);
             }
         }
         catch (err) {
             console.log(err);
             toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -93,21 +157,34 @@ function LectureDetails() {
     async function handleSubmit() {
         try {
             const formData = new FormData();
+            formData.append("lectureId", lectureId);
             formData.append("chapter", chapterId);
             formData.append("title", lectureTitle);
             formData.append("description", lectureDescription);
-            formData.append("thumbnail", lectureThumbnail);
-            formData.append("videoUrl", videoFile);
-            const response = await api.post("/lectures", formData);
+            formData.append("duration", lectureDuration);
+            formData.append("textContent", resourceText);
+            formData.append("oldThumbnail", oldThumbnail || "");
+            formData.append("oldVideoUrl", oldVideoUlr || "");
+            if (lectureThumbnail) {
+                formData.append("thumbnail", lectureThumbnail);
+            }
+            if (videoFile) {
+                formData.append("videoUrl", videoFile);
+            }
+            const response = await api.put("/lectures", formData);
             if (response.data?.success) {
-                toast.success("Lecture Uploaded Sucessfully");
-                navigate(-1);
+                toast.success("Lecture Updated Successfully");
+                getLectureDetails();
             }
         }
         catch (err) {
             console.log(err);
             toast.error(err.response?.data?.message || "Internal Server Error");
         }
+    }
+
+    if (loading) {
+        return <div className="lecture-details-page"><p className="page-feedback">Loading lecture...</p></div>;
     }
 
     return (
@@ -307,7 +384,6 @@ function LectureDetails() {
                                         onChange={(e) =>
                                             setQuizTitle(e.target.value)
                                         }
-                                        required
                                     />
 
                                 </div>
@@ -315,7 +391,7 @@ function LectureDetails() {
                                 <button className="primary-btn">
 
                                     <FaPlus />
-                                    Add Quiz
+                                    Open Quiz Builder
 
                                 </button>
 
@@ -342,10 +418,10 @@ function LectureDetails() {
 
                                             <button
                                                 className="primary-btn"
-                                                onClick={() => navigate(`/teacher/quiz-builder/${lectureId}`)}
+                                                onClick={() => navigate(`/teacher/quiz-builder/${lectureId}?quizId=${quiz._id}`)}
                                             >
                                                 <FaPlus />
-                                                Open Quiz Builder
+                                                Edit Quiz
                                             </button>
 
 
@@ -368,22 +444,21 @@ function LectureDetails() {
 
                         <div className="content-card">
 
-                            <h2>Upload Resource</h2>
+                            <h2>Lecture Notes</h2>
 
                             <form onSubmit={handleAddResource}>
 
                                 <div className="form-group">
 
-                                    <label>Resource Title</label>
+                                    <label>Notes Title</label>
 
                                     <input
                                         type="text"
-                                        placeholder="Enter resource title"
+                                        placeholder="Optional note heading"
                                         value={resourceTitle}
                                         onChange={(e) =>
                                             setResourceTitle(e.target.value)
                                         }
-                                        required
                                     />
 
                                 </div>
@@ -391,7 +466,7 @@ function LectureDetails() {
                                 {/* Resource Type */}
                                 <div className="form-group">
 
-                                    <label>Resource Type</label>
+                                    <label>Content Type</label>
 
                                     <select
                                         value={resourceType}
@@ -400,11 +475,11 @@ function LectureDetails() {
                                         }
                                     >
                                         <option value="text">
-                                            Text Content
+                                            Text Notes
                                         </option>
 
                                         <option value="file">
-                                            Upload File
+                                            File Upload
                                         </option>
                                     </select>
 
@@ -416,10 +491,10 @@ function LectureDetails() {
 
                                         <div className="form-group">
 
-                                            <label>Text Content</label>
+                                            <label>Lecture Notes</label>
 
                                             <textarea
-                                                placeholder="Write your resource content..."
+                                                placeholder="Write lecture notes, explanations or key takeaways..."
                                                 value={resourceText}
                                                 onChange={(e) =>
                                                     setResourceText(e.target.value)
@@ -457,7 +532,7 @@ function LectureDetails() {
                                 <button className="primary-btn">
 
                                     <FaUpload />
-                                    Upload Resource
+                                    Save Notes Draft
 
                                 </button>
 
@@ -477,8 +552,16 @@ function LectureDetails() {
                                             key={index}
                                         >
 
-                                            <div>
-                                                <h3>{resource.title}</h3>
+                                            <div className="resource-card-body">
+                                                <input
+                                                    className="resource-title-input"
+                                                    value={resource.title}
+                                                    onChange={(e) => {
+                                                        const nextResources = [...resources];
+                                                        nextResources[index] = { ...resource, title: e.target.value };
+                                                        setResources(nextResources);
+                                                    }}
+                                                />
                                                 <p>
                                                     Resource #{index + 1}
                                                 </p>
@@ -491,18 +574,31 @@ function LectureDetails() {
 
                                                     ) : (
 
-                                                        <p className="resource-preview">
-                                                            {resource.file?.name}
-                                                        </p>
+                                                        <a className="resource-preview resource-link" href={UPLOADS_URL + resource.fileUrl} target="_blank" rel="noreferrer">
+                                                            {resource.title}
+                                                        </a>
 
                                                     )
                                                 }
                                             </div>
 
+                                            {resource.type === "file" ? (
+                                                <div className="resource-actions">
+                                                    <button className="primary-btn" onClick={() => handleUpdateResourceTitle(resource.fileUrl, resource.title)} disabled={savingResourceFileUrl === resource.fileUrl}>
+                                                        Save
+                                                    </button>
+                                                    <button className="danger-btn" onClick={() => handleDeleteResource(resource.fileUrl)} disabled={savingResourceFileUrl === resource.fileUrl}>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            ) : null}
+
                                         </div>
                                     )
                                 })
                             }
+
+                            {!resources.length ? <p className="page-feedback">No resources uploaded yet.</p> : null}
 
                         </div>
 

@@ -1,11 +1,13 @@
 import "./Header.css"
-import { Link, useLocation, useParams } from "react-router-dom"
-import { CiSearch } from "react-icons/ci";
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { FaSearch } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { ImCross } from "react-icons/im";
 import { useState } from "react";
-import { RxCross1, RxCross2 } from "react-icons/rx";
+import { RxCross1 } from "react-icons/rx";
+import { useUser } from "../context/UserContext";
+import api from "../utils/api";
+import toast from "react-hot-toast";
+
 function Header() {
     const links = [
         { name: "Home", url: "/" },
@@ -15,6 +17,25 @@ function Header() {
     ];
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const path = useLocation();
+    const navigate = useNavigate();
+    const { user, setUser } = useUser();
+
+    async function handleLogout() {
+        try {
+            const response = await api.post("/auth/logout");
+            if (response.data?.success) {
+                setUser(null);
+                toast.success("Logout Successfully");
+                navigate("/");
+            }
+        }
+        catch (err) {
+            toast.error(err?.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    const dashboardLink = user?.role === "teacher" ? "/teacher/courses" : "/student/dashboard";
+
     return (
         <header>
             <nav>
@@ -36,7 +57,16 @@ function Header() {
                     <div className="search">
                         <FaSearch className="search-icon" /> <input type="text" placeholder="Search Courses" />
                     </div>
-                    <Link to="/login" className="signup-btn">SignIn</Link>
+                    {
+                        user ? (
+                            <>
+                                <Link to={dashboardLink} className="signup-btn">Dashboard</Link>
+                                <button type="button" className="signup-btn" onClick={handleLogout}>Logout</button>
+                            </>
+                        ) : (
+                            <Link to="/login" className="signup-btn">SignIn</Link>
+                        )
+                    }
                 </div>
 
                 <div className="mobine-menu-button">
@@ -60,7 +90,16 @@ function Header() {
                             <FaSearch className="search-icon" /> <input type="text" placeholder="Search Courses" />
                         </div>
 
-                        <Link to="/login" className="mobile-signup-btn">Signin</Link>
+                        {
+                            user ? (
+                                <>
+                                    <Link to={dashboardLink} className="mobile-signup-btn">Dashboard</Link>
+                                    <button type="button" className="mobile-signup-btn" onClick={handleLogout}>Logout</button>
+                                </>
+                            ) : (
+                                <Link to="/login" className="mobile-signup-btn">Signin</Link>
+                            )
+                        }
                     </div>
                 </div>
             }

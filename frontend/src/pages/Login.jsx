@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../utils/api";
 import { useUser } from "../context/UserContext";
@@ -8,6 +8,7 @@ import { useUser } from "../context/UserContext";
 function Login() {
     const [data, setData] = useState({ email: "", password: "" });
     const { user, setUser } = useUser();
+    const navigate = useNavigate();
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -29,6 +30,7 @@ function Login() {
             if (response.data?.success) {
                 toast.success("Login Successfully");
                 setUser(response.data?.data);
+                navigate(response.data?.data?.role === "teacher" ? "/teacher/courses" : "/student/dashboard");
             }
             else {
                 console.log(response);

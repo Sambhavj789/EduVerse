@@ -143,6 +143,41 @@
     box-shadow:0 4px 15px rgba(0,0,0,0.05);
 }
 
+.resource-card-body {
+    flex: 1;
+}
+
+.resource-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.resource-title-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.danger-btn {
+    border:none;
+    background:#dc2626;
+    color:white;
+    padding:14px 20px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.page-feedback {
+    margin-top: 18px;
+    color: #64748b;
+    text-align: center;
+}
+
 .list-card h3{
     color:#111827;
     margin-bottom:4px;

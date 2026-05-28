@@ -38,3 +38,16 @@ body {
   background-color: var(--bg);
   font-family: "Inter", sans-serif;
 }
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.page-feedback {
+  margin-top: 18px;
+  color: #64748b;
+  text-align: center;
+}

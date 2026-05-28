@@ -4,8 +4,8 @@ function courseValidator(req) {
     let totalDuration = 0;
     let totalLectures = 0;
     let totalStudents = 0;
-    let thumbnail = req.files.thumbnail[0].filename;
-    let trailerVideo = req.files.trailerVideo[0].filename;
+    let thumbnail = req.files?.thumbnail?.[0]?.filename;
+    let trailerVideo = req.files?.trailerVideo?.[0]?.filename;
     if (!title || !description || !category || !level || !language || !teacher || !requirements || !learningOutcomes) {
         throw new Error("Required Fields Not Found");
     }

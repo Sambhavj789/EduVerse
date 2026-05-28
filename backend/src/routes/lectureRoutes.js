@@ -3,7 +3,7 @@ const router = express.Router();
 const asyncHandler = require("../handlers/asyncHandler");
 const authMiddleware = require("../middlewares/authMiddleware");
 const teacherProtectedMiddleware = require("../middlewares/teacherProtectedMiddleware");
-const { createLecture, manageMaterials, updateLecture, deleteLecture, getLectures, getSingleLecture, streamVideo } = require("../controllers/lectureController");
+const { createLecture, manageMaterials, updateMaterial, deleteMaterial, updateLecture, deleteLecture, getLectures, getSingleLecture, streamVideo } = require("../controllers/lectureController");
 const upload = require("../utils/upload");
 const isCourseJoinedMiddleware = require("../middlewares/isCourseJoinedMiddleware");
 
@@ -18,6 +18,16 @@ router.post("/materials",
     asyncHandler(teacherProtectedMiddleware),
     upload.array("materials"),
     asyncHandler(manageMaterials));
+
+router.put("/materials",
+    asyncHandler(authMiddleware),
+    asyncHandler(teacherProtectedMiddleware),
+    asyncHandler(updateMaterial));
+
+router.delete("/materials",
+    asyncHandler(authMiddleware),
+    asyncHandler(teacherProtectedMiddleware),
+    asyncHandler(deleteMaterial));
 
 router.put("/",
     asyncHandler(authMiddleware),

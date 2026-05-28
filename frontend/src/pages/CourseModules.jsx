@@ -10,11 +10,22 @@ function CourseModules() {
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const [moduleTitle, setModuleTitle] = useState("");
+    const [editingModuleId, setEditingModuleId] = useState("");
     const [modules, setModules] = useState([]);
+    const [loading, setLoading] = useState(true);
     async function getModules() {
-        const response = await api.get(`/modules/${courseId}`);
-        if (response.data?.success) {
-            setModules(response.data?.data);
+        try {
+            setLoading(true);
+            const response = await api.get(`/modules/${courseId}`);
+            if (response.data?.success) {
+                setModules(response.data?.data);
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -25,11 +36,18 @@ function CourseModules() {
     async function handleSubmit(e) {
         try {
             e.preventDefault();
-            const response = await api.post("/modules", { title: moduleTitle, course: courseId });
+            const response = editingModuleId
+                ? await api.put("/modules", { title: moduleTitle, moduleId: editingModuleId })
+                : await api.post("/modules", { title: moduleTitle, course: courseId });
+
             if (response.data?.success) {
-                toast.success("Module Created Successfully");
-                const newModuleTitle = response.data?.data;
-                setModules([...modules, newModuleTitle])
+                toast.success(editingModuleId ? "Module Updated Successfully" : "Module Created Successfully");
+                const updatedModule = response.data?.data;
+                setModules(editingModuleId
+                    ? modules.map((item) => item._id === editingModuleId ? updatedModule : item)
+                    : [...modules, updatedModule]);
+                setModuleTitle("");
+                setEditingModuleId("");
             }
         }
         catch (err) {
@@ -40,6 +58,26 @@ function CourseModules() {
             setShowModal(false);
         }
     }
+
+    async function handleDeleteModule(moduleId) {
+        try {
+            const response = await api.delete("/modules", { data: { moduleId } });
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setModules(modules.filter((item) => item._id !== moduleId));
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    function openEditModal(module) {
+        setEditingModuleId(module._id);
+        setModuleTitle(module.title);
+        setShowModal(true);
+    }
+
     return (
         <div className='modules-page'>
             <div className="modules-header">
@@ -74,10 +112,11 @@ function CourseModules() {
                             <div
                                 className='module-card'
                                 key={index}
-                                onClick={() =>
-                                    navigate(`/teacher/course-content/${data._id}`)
-                                }
                             >
+                                <div className="module-card-actions">
+                                    <button type="button" className="mini-action-btn" onClick={() => openEditModal(data)}>Edit</button>
+                                    <button type="button" className="mini-action-btn danger-mini-btn" onClick={() => handleDeleteModule(data._id)}>Delete</button>
+                                </div>
                                 <h2>
                                     {data.title}
                                 </h2>
@@ -87,12 +126,23 @@ function CourseModules() {
                                     quizzes and resources
                                 </p>
 
+                                <button
+                                    type="button"
+                                    className="module-open-btn"
+                                    onClick={() => navigate(`/teacher/course-content/${data._id}`)}
+                                >
+                                    Open Module
+                                </button>
+
                             </div>
                         )
                     })
                 }
 
             </div>
+
+            {loading ? <p className="page-feedback">Loading modules...</p> : null}
+            {!loading && !modules.length ? <p className="page-feedback">No modules created yet.</p> : null}
 
             {/* Modal */}
             {
@@ -102,10 +152,14 @@ function CourseModules() {
                         <div className="course-modal">
 
                             <div className="modal-header">
-                                <h2>Add New Module</h2>
+                                <h2>{editingModuleId ? "Edit Module" : "Add New Module"}</h2>
 
                                 <button
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => {
+                                        setShowModal(false);
+                                        setEditingModuleId("");
+                                        setModuleTitle("");
+                                    }}
                                 >
                                     ✕
                                 </button>
@@ -129,7 +183,7 @@ function CourseModules() {
                                     type="submit"
                                     className="submit-btn"
                                 >
-                                    Create Module
+                                    {editingModuleId ? "Save Changes" : "Create Module"}
                                 </button>
 
                             </form>

@@ -24,10 +24,15 @@ const TeacherCourses = () => {
         totalLectures: "",
     });
     const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { user } = useUser();
     const navigate = useNavigate();
     async function getAllCoursesByTeacher() {
         try {
+            if (!user?._id) {
+                return;
+            }
+            setLoading(true);
             const response = await api.get(`/course/teacher-courses/${user._id}`);
             if (response.data?.success) {
                 console.log(response.data?.data);
@@ -36,13 +41,16 @@ const TeacherCourses = () => {
         }
         catch (err) {
             console.log(err);
-            toast.error(err.response.data?.message || "Internal Server Error");
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setLoading(false);
         }
     }
 
     useEffect(() => {
         getAllCoursesByTeacher();
-    }, [])
+    }, [user?._id])
 
     const handleChange = (e) => {
         setCourseData({
@@ -81,7 +89,7 @@ const TeacherCourses = () => {
         }
         catch (err) {
             console.log(err);
-            toast.error(err.response.data?.message || "Internal Server Error");
+            toast.error(err.response?.data?.message || "Internal Server Error");
         }
 
         setShowModal(false);
@@ -127,6 +135,9 @@ const TeacherCourses = () => {
                         })
                     }
                 </div>
+
+                {loading ? <p className="page-feedback">Loading your courses...</p> : null}
+                {!loading && !courses.length ? <p className="page-feedback">No courses created yet.</p> : null}
 
                 {/* Modal */}
                 {

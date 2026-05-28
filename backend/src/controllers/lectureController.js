@@ -19,22 +19,85 @@ async function createLecture(req, res) {
 }
 
 async function manageMaterials(req, res) {
-    const oldMaterials = req.body.oldMaterials || [];
-    const materialsData = req.body.materialsData || [];
-    const uploadedFiles = req.files;
     const { lectureId } = req.body;
-    for (let i = 0; i < materialsData.length; i++) {
-        const material = materailsData[i];
-        material.fileUrl = uploadedFiles[i].filename;
-    }
-    const finalMaterials = [...oldMaterials, ...materialsData];
     const lecture = await Lecture.findById(lectureId);
+
     if (!lecture) {
         return res.status(404).send({ success: false, message: "Lecture Not Found" });
     }
-    lecture.materials = finalMaterials;
+
+    const uploadedFiles = Array.isArray(req.files) ? req.files : [];
+    let materialsData = req.body.materialsData || [];
+
+    if (typeof materialsData === "string") {
+        try {
+            materialsData = JSON.parse(materialsData);
+        }
+        catch (err) {
+            materialsData = [];
+        }
+    }
+
+    if (!Array.isArray(materialsData) || !materialsData.length) {
+        materialsData = uploadedFiles.map((file, index) => ({
+            title: uploadedFiles.length === 1 ? req.body.title || file.originalname : file.originalname,
+            type: req.body.type || "file"
+        }));
+    }
+
+    const newMaterials = materialsData.map((material, index) => ({
+        title: material.title || uploadedFiles[index]?.originalname || `Resource ${lecture.materials.length + index + 1}`,
+        type: material.type || "file",
+        fileUrl: material.fileUrl || uploadedFiles[index]?.filename || ""
+    })).filter((material) => material.fileUrl);
+
+    lecture.materials = [...lecture.materials, ...newMaterials];
     const newLectureData = await lecture.save();
     return res.send({ success: true, message: "Materials Uploaded Successfully", data: newLectureData });
+}
+
+async function updateMaterial(req, res) {
+    const { lectureId, fileUrl, title } = req.body;
+    const lecture = await Lecture.findById(lectureId);
+
+    if (!lecture) {
+        return res.status(404).send({ success: false, message: "Lecture Not Found" });
+    }
+
+    const material = lecture.materials.find((item) => item.fileUrl === fileUrl);
+    if (!material) {
+        return res.status(404).send({ success: false, message: "Resource Not Found" });
+    }
+
+    material.title = title || material.title;
+    await lecture.save();
+
+    return res.send({ success: true, message: "Resource Updated Successfully", data: lecture });
+}
+
+async function deleteMaterial(req, res) {
+    const { lectureId, fileUrl } = req.body;
+    const lecture = await Lecture.findById(lectureId);
+
+    if (!lecture) {
+        return res.status(404).send({ success: false, message: "Lecture Not Found" });
+    }
+
+    const material = lecture.materials.find((item) => item.fileUrl === fileUrl);
+    if (!material) {
+        return res.status(404).send({ success: false, message: "Resource Not Found" });
+    }
+
+    lecture.materials = lecture.materials.filter((item) => item.fileUrl !== fileUrl);
+
+    const filePath = path.join(__dirname, "../../uploads", fileUrl);
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+
+    await lecture.save();
+
+    return res.send({ success: true, message: "Resource Deleted Successfully", data: lecture });
 }
 // oldMaterials = [{title:"",fileUrl:"",type:""}]
 // materialsData = [{title:"",type:""}]
@@ -44,8 +107,8 @@ async function updateLecture(req, res) {
     const data = lectureValidator(req);
     const oldThumbnail = req.body.oldThumbnail;
     const oldVideoUrl = req.body.oldVideoUrl;
-    data.thumbnail = oldThumbnail || data.thumbnail;
-    data.videoUrl = oldVideoUrl || data.videoUrl;
+    data.thumbnail = data.thumbnail || oldThumbnail;
+    data.videoUrl = data.videoUrl || oldVideoUrl;
     const lectureId = req.body.lectureId;
     const updatedLectureData = await Lecture.findByIdAndUpdate(lectureId, {
         title: data.title,
@@ -107,21 +170,38 @@ async function streamVideo(req, res) {
     if (!lecture) {
         return res.status(404).send({ success: false, message: "Lecture Not Found" });
     }
+
+    if (!lecture.videoUrl) {
+        return res.status(404).send({ success: false, message: "Lecture Video Not Found" });
+    }
+
     const videoUrl = lecture.videoUrl; // Video name
     const videoPath = path.join(__dirname, "../../uploads", videoUrl);
+    if (!fs.existsSync(videoPath)) {
+        return res.status(404).send({ success: false, message: "Video File Not Found" });
+    }
+
     const stat = fs.statSync(videoPath);
     const fileSize = stat.size;
     const range = req.headers.range; // bytes = 100000
+
     if (!range) {
-        return res.status(400).send({ success: false, message: "Range is required" });
+        res.writeHead(200, {
+            "Content-Length": fileSize,
+            "Content-Type": "video/mp4",
+            "Accept-Ranges": "bytes"
+        });
+        fs.createReadStream(videoPath).pipe(res);
+        return;
     }
+
     const CHUNK_SIZE = 10 ** 6; // 1mb
     const start = getNumber(range);
     const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
     const contentLength = end - start + 1;
     const headers = {
-        "Content-Range": `bytes ${start}-${end}`,
-        "Accept-Range": "bytes",
+        "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+        "Accept-Ranges": "bytes",
         "Content-Length": contentLength,
         "Content-Type": "video/mp4"
     }
@@ -132,4 +212,4 @@ async function streamVideo(req, res) {
 
 }
 
-module.exports = { createLecture, updateLecture, deleteLecture, getLectures, getSingleLecture, manageMaterials, streamVideo };
+module.exports = { createLecture, updateLecture, deleteLecture, getLectures, getSingleLecture, manageMaterials, updateMaterial, deleteMaterial, streamVideo };

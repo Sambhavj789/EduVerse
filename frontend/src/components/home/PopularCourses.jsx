@@ -1,31 +1,28 @@
 import "./PopularCourses.css"
 import CourseCard from "../CourseCard";
+import { useEffect, useState } from "react";
+import api from "../../utils/api";
+import { useNavigate } from "react-router-dom";
 
 function PopularCourses() {
+    const [courses, setCourses] = useState([]);
+    const navigate = useNavigate();
 
-    const courses = [
-        {
-            title: "Complete MERN Stack Course",
-            category: "Web Development",
-            level: "beginner",
-            teacher: "Rajesh Verma",
-            thumbnail: "mern-course.png"
-        },
-        {
-            title: "Advanced React Course",
-            category: "Frontend",
-            level: "intermediate",
-            teacher: "Rahul Sharma",
-            thumbnail: "react-course.png"
-        },
-        {
-            title: "Node.js Mastery",
-            category: "Backend",
-            level: "advanced",
-            teacher: "Aman Verma",
-            thumbnail: "node-course.png"
+    useEffect(() => {
+        async function loadCourses() {
+            try {
+                const response = await api.get("/course/all?limit=3");
+                if (response.data?.success) {
+                    setCourses(response.data?.data || []);
+                }
+            }
+            catch (err) {
+                setCourses([]);
+            }
         }
-    ]
+
+        loadCourses();
+    }, []);
 
     return (
         <section className="popular-courses">
@@ -39,7 +36,7 @@ function PopularCourses() {
                             key={index}
                             data={course}
                             mode="normal"
-                            onClick={() => alert(course.title)}
+                            onClick={() => navigate(`/courses/${course._id}`)}
                         />
                     ))
                 }

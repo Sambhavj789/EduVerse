@@ -1,20 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./QuizBuilder.css";
 import {
     FaPlus,
     FaTrash,
     FaCheckCircle
 } from "react-icons/fa";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import api from "../utils/api";
 
 function QuizBuilder() {
+    const { lectureId } = useParams();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const quizId = searchParams.get("quizId");
+    const [quizTitle, setQuizTitle] = useState("");
+    const [difficulty, setDifficulty] = useState("easy");
 
     const [questions, setQuestions] = useState([]);
 
     const [questionData, setQuestionData] = useState({
         question: "",
         options: ["", "", "", ""],
-        correctAnswer: 0
+        correctAnswer: "",
+        explanation: "",
+        marks: 1
     });
+
+    useEffect(() => {
+        async function loadQuiz() {
+            if (!quizId) {
+                return;
+            }
+
+            try {
+                const response = await api.get(`/quizes/lecture/${lectureId}`);
+                const currentQuiz = (response.data?.data || []).find((quiz) => quiz._id === quizId);
+                if (currentQuiz) {
+                    setQuizTitle(currentQuiz.title);
+                    setDifficulty(currentQuiz.difficulty || "easy");
+                    setQuestions(currentQuiz.questions || []);
+                }
+            }
+            catch (err) {
+                toast.error(err?.response?.data?.message || "Unable to load quiz");
+            }
+        }
+
+        loadQuiz();
+    }, [lectureId, quizId]);
 
     // Handle Question Change
     function handleOptionChange(index, value) {
@@ -38,12 +72,19 @@ function QuizBuilder() {
             ...questionData
         };
 
+        if (!newQuestion.correctAnswer) {
+            toast.error("Select the correct option first");
+            return;
+        }
+
         setQuestions([...questions, newQuestion]);
 
         setQuestionData({
             question: "",
             options: ["", "", "", ""],
-            correctAnswer: 0
+            correctAnswer: "",
+            explanation: "",
+            marks: 1
         });
     }
 
@@ -55,6 +96,40 @@ function QuizBuilder() {
         );
 
         setQuestions(updatedQuestions);
+    }
+
+    async function handleSaveQuiz() {
+        if (!quizTitle.trim()) {
+            toast.error("Quiz title is required");
+            return;
+        }
+
+        if (!questions.length) {
+            toast.error("Add at least one question");
+            return;
+        }
+
+        const payload = {
+            lecture: lectureId,
+            title: quizTitle,
+            difficulty,
+            questions,
+            totalMarks: questions.reduce((sum, question) => sum + Number(question.marks || 1), 0)
+        };
+
+        try {
+            const response = quizId
+                ? await api.put("/quizes", { ...payload, quiz: quizId })
+                : await api.post("/quizes/create", payload);
+
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                navigate(-1);
+            }
+        }
+        catch (err) {
+            toast.error(err?.response?.data?.message || "Unable to save quiz");
+        }
     }
 
     return (
@@ -69,6 +144,25 @@ function QuizBuilder() {
                     <p>
                         Create interactive quizzes for your lecture
                     </p>
+
+                    <div className="form-group" style={{ marginTop: "20px" }}>
+                        <label>Quiz Title</label>
+                        <input
+                            type="text"
+                            placeholder="Enter quiz title"
+                            value={quizTitle}
+                            onChange={(e) => setQuizTitle(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Difficulty</label>
+                        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
                 </div>
 
             </div>
@@ -99,7 +193,7 @@ function QuizBuilder() {
 
                 </div>
 
-                <button className="save-quiz-btn">
+                <button className="save-quiz-btn" onClick={handleSaveQuiz}>
                     Save Quiz
                 </button>
 
@@ -140,11 +234,11 @@ function QuizBuilder() {
 
                                 return (
                                     <div
-                                        className={
-                                            questionData.correctAnswer === index
+                                                className={
+                                            questionData.correctAnswer === option
                                                 ? "option-card active-option"
                                                 : "option-card"
-                                        }
+                                         }
                                         key={index}
                                     >
 
@@ -160,7 +254,7 @@ function QuizBuilder() {
                                                 onClick={() =>
                                                     setQuestionData({
                                                         ...questionData,
-                                                        correctAnswer: index
+                                                        correctAnswer: option
                                                     })
                                                 }
                                             >
@@ -185,7 +279,7 @@ function QuizBuilder() {
                                         />
 
                                         {
-                                            questionData.correctAnswer === index && (
+                                            questionData.correctAnswer === option && (
                                                 <p className="correct-label">
                                                     Correct Answer
                                                 </p>
@@ -196,6 +290,42 @@ function QuizBuilder() {
                                 )
                             })
                         }
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>Explanation</label>
+
+                        <textarea
+                            rows="3"
+                            placeholder="Explain the answer briefly"
+                            value={questionData.explanation}
+                            onChange={(e) =>
+                                setQuestionData({
+                                    ...questionData,
+                                    explanation: e.target.value
+                                })
+                            }
+                        />
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>Marks</label>
+
+                        <input
+                            type="number"
+                            min="1"
+                            value={questionData.marks}
+                            onChange={(e) =>
+                                setQuestionData({
+                                    ...questionData,
+                                    marks: Number(e.target.value) || 1
+                                })
+                            }
+                        />
 
                     </div>
 
@@ -251,7 +381,7 @@ function QuizBuilder() {
                                             return (
                                                 <div
                                                     className={
-                                                        question.correctAnswer === optionIndex
+                                                        question.correctAnswer === option
                                                             ? "saved-option correct-option"
                                                             : "saved-option"
                                                     }
@@ -266,6 +396,8 @@ function QuizBuilder() {
                                     }
 
                                 </div>
+
+                                {question.explanation ? <p style={{ marginTop: "12px" }}>{question.explanation}</p> : null}
 
                             </div>
                         )

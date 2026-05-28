@@ -81,6 +81,17 @@
     outline: none;
 }
 
+.form-group input,
+.form-group select {
+    border: 1px solid #d1d5db;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 15px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
     border-color: #4f46e5;
 }

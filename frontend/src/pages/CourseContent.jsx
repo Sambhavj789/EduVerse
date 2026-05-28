@@ -19,8 +19,10 @@ function CourseContent() {
     const params = useParams();
     const moduleId = params.moduleId;
     const [chapterTitle, setChapterTitle] = useState("");
+    const [editingChapterId, setEditingChapterId] = useState("");
 
     const [chapters, setChapters] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     function toggleChapter(id) {
         if (expandedChapter === id) {
@@ -31,6 +33,7 @@ function CourseContent() {
     }
     async function getAllChapters() {
         try {
+            setLoading(true);
             const response = await api.get(`/chapters/${moduleId}`);
             if (response.data?.success) {
                 setChapters(response.data?.data);
@@ -39,6 +42,9 @@ function CourseContent() {
         catch (err) {
             console.log(err);
             toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+        finally {
+            setLoading(false);
         }
     }
     useEffect(() => {
@@ -49,10 +55,15 @@ function CourseContent() {
     async function handleAddChapter(e) {
         try {
             e.preventDefault();
-            const response = await api.post("/chapters", { module: moduleId, title: chapterTitle });
+            const response = editingChapterId
+                ? await api.put("/chapters", { chapterId: editingChapterId, title: chapterTitle })
+                : await api.post("/chapters", { module: moduleId, title: chapterTitle });
+
             if (response.data?.success) {
-                toast.success("Chapter Created Successfully");
-                setChapters([...chapters, response.data?.data]);
+                toast.success(editingChapterId ? "Chapter Updated Successfully" : "Chapter Created Successfully");
+                setChapters(editingChapterId
+                    ? chapters.map((item) => item._id === editingChapterId ? { ...item, ...response.data?.data } : item)
+                    : [...chapters, response.data?.data]);
             }
         }
         catch (err) {
@@ -60,7 +71,43 @@ function CourseContent() {
             toast.error(err.response?.data?.message || "Internal Server Error");
         }
         setChapterTitle("");
+        setEditingChapterId("");
         setShowChapterModal(false);
+    }
+
+    async function handleDeleteChapter(chapterId) {
+        try {
+            const response = await api.delete("/chapters", { data: { chapterId } });
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setChapters(chapters.filter((item) => item._id !== chapterId));
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    async function handleDeleteLecture(lectureId) {
+        try {
+            const response = await api.delete("/lectures", { data: { lectureId } });
+            if (response.data?.success) {
+                toast.success(response.data.message);
+                setChapters(chapters.map((chapter) => ({
+                    ...chapter,
+                    lectures: chapter.lectures.filter((lecture) => lecture._id !== lectureId)
+                })));
+            }
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    function openChapterModal(chapter = null) {
+        setEditingChapterId(chapter?._id || "");
+        setChapterTitle(chapter?.title || "");
+        setShowChapterModal(true);
     }
 
 
@@ -70,7 +117,7 @@ function CourseContent() {
             {/* Header */}
             <div className="content-header">
 
-                <div>
+                    <div>
                     <div className="module-path">
                         <span onClick={() => {
                             navigate(-2);
@@ -87,7 +134,7 @@ function CourseContent() {
 
                 <button
                     className="add-chapter-btn"
-                    onClick={() => setShowChapterModal(true)}
+                    onClick={() => openChapterModal()}
                 >
                     <FaPlus />
                     Add Chapter
@@ -101,7 +148,7 @@ function CourseContent() {
                 {
                     chapters.map((chapter) => {
 
-                        const isOpen = expandedChapter === chapter.id;
+                        const isOpen = expandedChapter === chapter._id;
 
                         return (
                             <div
@@ -112,7 +159,7 @@ function CourseContent() {
                                 {/* Header */}
                                 <div
                                     className="chapter-header"
-                                    onClick={() => toggleChapter(chapter.id)}
+                                    onClick={() => toggleChapter(chapter._id)}
                                 >
 
                                     <div className="chapter-left">
@@ -133,19 +180,39 @@ function CourseContent() {
 
                                     </div>
 
-                                    <button
-                                        className="add-lecture-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
+                                    <div className="chapter-actions">
+                                        <button
+                                            className="mini-action-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                openChapterModal(chapter);
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="mini-action-btn danger-mini-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteChapter(chapter._id);
+                                            }}
+                                        >
+                                            Delete
+                                        </button>
+                                        <button
+                                            className="add-lecture-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
 
-                                            navigate(
-                                                `/teacher/create-lecture/${chapter._id}`
-                                            );
-                                        }}
-                                    >
-                                        <FaPlus />
-                                        Add Lecture
-                                    </button>
+                                                navigate(
+                                                    `/teacher/create-lecture/${chapter._id}`
+                                                );
+                                            }}
+                                        >
+                                            <FaPlus />
+                                            Add Lecture
+                                        </button>
+                                    </div>
 
                                 </div>
 
@@ -161,9 +228,6 @@ function CourseContent() {
                                                         <div
                                                             className="lecture-card"
                                                             key={index}
-                                                            onClick={() => {
-                                                                navigate(`/teacher/lecture-detail/${lecture._id}`)
-                                                            }}
                                                         >
 
                                                             <span className="lecture-number">
@@ -172,6 +236,15 @@ function CourseContent() {
 
                                                             <div>
                                                                 <h3>{lecture.title}</h3>
+                                                            </div>
+
+                                                            <div className="lecture-actions">
+                                                                <button type="button" className="mini-action-btn" onClick={() => navigate(`/teacher/lecture-detail/${lecture._id}`)}>
+                                                                    Edit
+                                                                </button>
+                                                                <button type="button" className="mini-action-btn danger-mini-btn" onClick={() => handleDeleteLecture(lecture._id)}>
+                                                                    Delete
+                                                                </button>
                                                             </div>
 
                                                         </div>
@@ -190,6 +263,9 @@ function CourseContent() {
 
             </div>
 
+            {loading ? <p className="page-feedback">Loading chapters...</p> : null}
+            {!loading && !chapters.length ? <p className="page-feedback">No chapters added yet.</p> : null}
+
             {/* Add Chapter Modal */}
             {
                 showChapterModal && (
@@ -199,10 +275,14 @@ function CourseContent() {
 
                             <div className="modal-top">
 
-                                <h2>Add Chapter</h2>
+                                <h2>{editingChapterId ? "Edit Chapter" : "Add Chapter"}</h2>
 
                                 <button
-                                    onClick={() => setShowChapterModal(false)}
+                                    onClick={() => {
+                                        setShowChapterModal(false);
+                                        setEditingChapterId("");
+                                        setChapterTitle("");
+                                    }}
                                 >
                                     ✕
                                 </button>
@@ -228,7 +308,7 @@ function CourseContent() {
                                 </div>
 
                                 <button className="submit-btn">
-                                    Create Chapter
+                                    {editingChapterId ? "Save Changes" : "Create Chapter"}
                                 </button>
 
                             </form>

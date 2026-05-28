@@ -96,6 +96,28 @@
     cursor: pointer;
 }
 
+.chapter-actions,
+.lecture-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.mini-action-btn {
+    border: none;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.danger-mini-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
 .lectures-container {
     padding: 0 22px 22px 22px;
     display: flex;
@@ -111,6 +133,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    justify-content: space-between;
 }
 
 .lecture-number {

@@ -43,9 +43,13 @@ async function getAllCourses(req, res) {
         filter.level = level;
     }
     if (search) {
-        filter.title = { $regex: search, $option: "i" };
+        filter.title = { $regex: search, $options: "i" };
     }
-    const courses = await Course.find(filter).skip(skip).limit(limit);
+    const courses = await Course.find(filter)
+        .populate("teacher", "fullname email profileImage")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
     const totalCourse = await Course.countDocuments(filter);
     return res.send({
         success: true, data: courses, pagination: {
@@ -61,7 +65,28 @@ async function getAllCourses(req, res) {
 
 async function getSingleCourse(req, res) {
     const courseId = req.params.courseId;
-    const course = await Course.findById(courseId).populate("teacher");
+    const course = await Course.findById(courseId)
+        .populate("teacher", "fullname email profileImage bio")
+        .populate({
+            path: "modules",
+            options: { sort: { order: 1, createdAt: 1 } },
+            populate: {
+                path: "chapters",
+                options: { sort: { order: 1, createdAt: 1 } },
+                populate: {
+                    path: "lectures",
+                    options: { sort: { order: 1, createdAt: 1 } },
+                    populate: {
+                        path: "quizes"
+                    }
+                }
+            }
+        });
+
+    if (!course) {
+        return res.status(404).send({ success: false, message: "Course Not Found" });
+    }
+
     return res.send({ success: true, message: "Success", data: course });
 }
 

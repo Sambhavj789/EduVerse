@@ -138,6 +138,39 @@
     color:#6b7280;
     font-size:14px;
     line-height:1.6;
+    margin-bottom: 18px;
+}
+
+.module-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.mini-action-btn,
+.module-open-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.mini-action-btn {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.danger-mini-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.module-open-btn {
+    width: 100%;
+    background: #111827;
+    color: white;
 }
 
 /* ================= MODULE ICON ================= */
