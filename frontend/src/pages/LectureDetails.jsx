@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LectureDetails.css";
 import {
     FaVideo,
@@ -8,36 +8,31 @@ import {
     FaPlus
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import api from "../utils/api";
+import toast from "react-hot-toast";
 
 function LectureDetails() {
 
-    const [activeTab, setActiveTab] = useState("video");
-
-    // Demo States
+    const [activeTab, setActiveTab] = useState("overview");
     const [videoFile, setVideoFile] = useState(null);
     const navigate = useNavigate();
     const params = useParams();
     const lectureId = params.lectureId;
 
     const [quizTitle, setQuizTitle] = useState("");
-    const [quizzes, setQuizzes] = useState([
-        {
-            title: "React Basics Quiz"
-        }
-    ]);
+    const [quizzes, setQuizzes] = useState([]);
     const [lectureTitle, setLectureTitle] = useState("");
-
+    const [lectureThumbnail, setLectureThumbnail] = useState(null);
+    const [lectureDescription, setLectureDesciprtion] = useState("");
+    const [lectureDuration, setLectureDuration] = useState("");
     const [resourceType, setResourceType] = useState("text");
     const [resourceText, setResourceText] = useState("");
-
+    const [oldThumbnail,setOldThumbnail] = useState(null);
+    const [oldVideoUlr,setOldVideoUrl] = useState(null);
     const [resourceTitle, setResourceTitle] = useState("");
     const [resourceFile, setResourceFile] = useState(null);
 
-    const [resources, setResources] = useState([
-        {
-            title: "React Notes PDF"
-        }
-    ]);
+    const [resources, setResources] = useState([]);
 
     // Add Quiz
     function handleAddQuiz(e) {
@@ -53,20 +48,6 @@ function LectureDetails() {
     }
 
     // Add Resource
-    function handleAddResource(e) {
-        e.preventDefault();
-
-        const newResource = {
-            title: resourceTitle,
-            file: resourceFile
-        };
-
-        setResources([...resources, newResource]);
-
-        setResourceTitle("");
-        setResourceFile(null);
-    }
-
     function handleAddResource(e) {
 
         e.preventDefault();
@@ -84,6 +65,49 @@ function LectureDetails() {
         setResourceText("");
         setResourceFile(null);
         setResourceType("text");
+    }
+
+    async function getLectureDetails() {
+        try {
+            const response = await api.get(`/lectures/${lectureId}`);
+            if (response.data?.success) {
+                const data = response.data?.data;
+                setLectureTitle(data.title);
+                setLectureDesciprtion(data.description);
+                setLectureDuration(data.duration);
+                setOldThumbnail(data.thumbnail);
+                setOldVideoUrl(data.videoUrl);
+                console.log(response.data?.data);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    useEffect(() => {
+        getLectureDetails();
+    }, []);
+
+    async function handleSubmit() {
+        try {
+            const formData = new FormData();
+            formData.append("chapter", chapterId);
+            formData.append("title", lectureTitle);
+            formData.append("description", lectureDescription);
+            formData.append("thumbnail", lectureThumbnail);
+            formData.append("videoUrl", videoFile);
+            const response = await api.post("/lectures", formData);
+            if (response.data?.success) {
+                toast.success("Lecture Uploaded Sucessfully");
+                navigate(-1);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
     }
 
     return (
@@ -113,6 +137,13 @@ function LectureDetails() {
 
             {/* Tabs */}
             <div className="lecture-tabs">
+                <button
+                    className={activeTab === "overview" ? "active-tab" : ""}
+                    onClick={() => setActiveTab("overview")}
+                >
+                    <FaVideo />
+                    Overview
+                </button>
 
                 <button
                     className={activeTab === "video" ? "active-tab" : ""}
@@ -140,14 +171,14 @@ function LectureDetails() {
 
             </div>
 
-            {/* VIDEO TAB */}
+            {/* Overview Tab */}
             {
-                activeTab === "video" && (
+                activeTab === "overview" && (
                     <div className="tab-content">
 
                         <div className="content-card">
 
-                            <h2>Upload Lecture Video</h2>
+                            <h2>Lecture Overview</h2>
                             <div className="form-group">
 
                                 <label>Lecture Title</label>
@@ -160,6 +191,64 @@ function LectureDetails() {
                                 />
 
                             </div>
+                            <div className="form-group">
+
+                                <label>Lecture Description</label>
+
+                                <textarea
+                                    type="text"
+                                    placeholder="Enter lecture description"
+                                    value={lectureDescription}
+                                    onChange={(e) => setLectureDesciprtion(e.target.value)}
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label>Lecture Thumbnail</label>
+
+                                <input
+                                    type="file"
+                                    placeholder="Enter lecture title"
+                                    accept="image/*"
+                                    onChange={(e) => setLectureThumbnail(e.target.files[0])}
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label>Lecture Duration</label>
+
+                                <input
+                                    type="text"
+                                    placeholder="Enter lecture duration"
+                                    value={lectureDuration}
+                                    onChange={(e) => setLectureDuration(e.target.value)}
+                                />
+
+                            </div>
+
+
+                            <button className="primary-btn" onClick={handleSubmit}>
+                                Save Lecture
+                            </button>
+
+                        </div>
+
+                    </div>
+                )
+            }
+
+            {/* VIDEO TAB */}
+            {
+                activeTab === "video" && (
+                    <div className="tab-content">
+
+                        <div className="content-card">
+
+                            <h2>Upload Lecture Video</h2>
 
                             <div className="upload-box">
 
@@ -186,11 +275,6 @@ function LectureDetails() {
                                     </div>
                                 )
                             }
-
-                            <button className="primary-btn">
-                                Save Video
-                            </button>
-
                         </div>
 
                     </div>

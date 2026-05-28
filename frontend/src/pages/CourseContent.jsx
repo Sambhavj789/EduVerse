@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./CourseContent.css";
 import {
     FaChevronDown,
@@ -6,6 +6,8 @@ import {
     FaPlus
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import api from "../utils/api";
+import toast from "react-hot-toast";
 
 function CourseContent() {
 
@@ -16,34 +18,9 @@ function CourseContent() {
     const navigate = useNavigate();
     const params = useParams();
     const moduleId = params.moduleId;
+    const [chapterTitle, setChapterTitle] = useState("");
 
-    // Demo Data
-    const [chapters, setChapters] = useState([
-        {
-            id: 1,
-            title: "Introduction to MERN Stack",
-            lectures: [
-                {
-                    title: "What is MERN Stack?"
-                },
-                {
-                    title: "Project Overview"
-                }
-            ]
-        },
-        {
-            id: 2,
-            title: "React Basics",
-            lectures: [
-                {
-                    title: "React Components"
-                },
-                {
-                    title: "React Hooks"
-                }
-            ]
-        }
-    ]);
+    const [chapters, setChapters] = useState([]);
 
     function toggleChapter(id) {
         if (expandedChapter === id) {
@@ -52,19 +29,36 @@ function CourseContent() {
             setExpandedChapter(id);
         }
     }
+    async function getAllChapters() {
+        try {
+            const response = await api.get(`/chapters/${moduleId}`);
+            if (response.data?.success) {
+                setChapters(response.data?.data);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+    useEffect(() => {
+        getAllChapters();
+    }, [])
 
     // Add Chapter
-    function handleAddChapter(e) {
-        e.preventDefault();
-
-        const newChapter = {
-            id: Date.now(),
-            title: chapterTitle,
-            lectures: []
-        };
-
-        setChapters([...chapters, newChapter]);
-
+    async function handleAddChapter(e) {
+        try {
+            e.preventDefault();
+            const response = await api.post("/chapters", { module: moduleId, title: chapterTitle });
+            if (response.data?.success) {
+                toast.success("Chapter Created Successfully");
+                setChapters([...chapters, response.data?.data]);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
         setChapterTitle("");
         setShowChapterModal(false);
     }
@@ -112,7 +106,7 @@ function CourseContent() {
                         return (
                             <div
                                 className="chapter-card"
-                                key={chapter.id}
+                                key={chapter._id}
                             >
 
                                 {/* Header */}
@@ -145,7 +139,7 @@ function CourseContent() {
                                             e.stopPropagation();
 
                                             navigate(
-                                                `/teacher/lecture-detail/${chapter.id}`
+                                                `/teacher/create-lecture/${chapter._id}`
                                             );
                                         }}
                                     >
@@ -167,6 +161,9 @@ function CourseContent() {
                                                         <div
                                                             className="lecture-card"
                                                             key={index}
+                                                            onClick={() => {
+                                                                navigate(`/teacher/lecture-detail/${lecture._id}`)
+                                                            }}
                                                         >
 
                                                             <span className="lecture-number">

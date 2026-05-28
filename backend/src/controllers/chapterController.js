@@ -43,8 +43,9 @@ async function deleteChapter(req, res) {
 }
 
 async function getChapters(req, res) {
-    const { moduleId } = req.params.moduleId;
-    const allChapters = await Chapter.find({ module: moduleId });
+    const moduleId  = req.params.moduleId;
+    // console.log(moduleId,req.params);
+    const allChapters = await Chapter.find({ module: moduleId }).populate("lectures");
     return res.send({ success: true, message: "Success", data: allChapters });
 }
 
