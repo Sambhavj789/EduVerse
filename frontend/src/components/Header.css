@@ -67,6 +67,36 @@ nav {
     border-radius: 20px;
 }
 
+.after-login-header-btns {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.after-login-header-btns>a {
+    text-decoration: none;
+    background-color: var(--primary-dark);
+    color: var(--white);
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.after-login-header-btns>button {
+    background-color: var(--orange);
+    color: var(--white);
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    height: 35px;
+    font-size: 14px;
+}
+
 .mobine-menu-button {
     font-size: 28px;
     display: flex;
@@ -105,13 +135,14 @@ nav {
     margin-bottom: 25px;
     max-width: 300px;
 }
+
 .mobile-search>input {
     border: none;
     outline: none;
     width: 200px;
 }
 
-.mobile-signup-btn{
+.mobile-signup-btn {
     color: var(--text);
     text-decoration: none;
     background-color: var(--primary);
@@ -131,7 +162,7 @@ nav {
         display: block;
     }
 
-    .mobile-menu{
+    .mobile-menu {
         display: block;
     }
 }

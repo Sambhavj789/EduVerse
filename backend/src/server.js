@@ -16,6 +16,8 @@ const path = require("path");
 const app = express();
 connectToDB();
 app.use(express.json()); // To parse json from frontend
+app.use(express.urlencoded({extended:true}));
+
 app.use(cors({
     origin: process.env.MODE == "production" ? process.env.FRONTEND_URL : true,
     credentials: true

@@ -1,4 +1,4 @@
-.tc-page {
+.st-page {
   padding: 24px;
   background: #f8fafc;
   min-height: 100vh;
@@ -8,27 +8,27 @@
    Header
 ========================= */
 
-.tc-header {
+.st-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
 
-.tc-header h1 {
+.st-header h1 {
   font-size: 28px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
 
-.tc-header p {
+.st-header p {
   margin-top: 4px;
   color: #64748b;
   font-size: 14px;
 }
 
-.tc-add-btn {
+.st-add-btn {
   border: none;
   cursor: pointer;
 
@@ -48,7 +48,7 @@
   transition: all 0.3s ease;
 }
 
-.tc-add-btn:hover {
+.st-add-btn:hover {
   transform: translateY(-2px);
 
   box-shadow:
@@ -59,7 +59,7 @@
    Grid
 ========================= */
 
-.tc-grid {
+.st-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
@@ -69,7 +69,7 @@
    Modal Overlay
 ========================= */
 
-.tc-modal-overlay {
+.st-modal-overlay {
   position: fixed;
   inset: 0;
 
@@ -90,7 +90,7 @@
    Modal
 ========================= */
 
-.tc-modal {
+.st-modal {
   width: 100%;
   max-width: 760px;
 
@@ -108,11 +108,11 @@
     0 25px 60px rgba(0, 0, 0, 0.15);
 }
 
-.tc-modal::-webkit-scrollbar {
+.st-modal::-webkit-scrollbar {
   width: 8px;
 }
 
-.tc-modal::-webkit-scrollbar-thumb {
+.st-modal::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 20px;
 }
@@ -121,7 +121,7 @@
    Modal Header
 ========================= */
 
-.tc-modal-header {
+.st-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -129,7 +129,7 @@
   margin-bottom: 20px;
 }
 
-.tc-modal-header h2 {
+.st-modal-header h2 {
   margin: 0;
 
   font-size: 24px;
@@ -138,7 +138,7 @@
   color: #0f172a;
 }
 
-.tc-close-btn {
+.st-close-btn {
   width: 38px;
   height: 38px;
 
@@ -154,7 +154,7 @@
   transition: all 0.2s ease;
 }
 
-.tc-close-btn:hover {
+.st-close-btn:hover {
   background: #e2e8f0;
 }
 
@@ -162,14 +162,14 @@
    Form
 ========================= */
 
-.tc-form-group {
+.st-form-group {
   display: flex;
   flex-direction: column;
 
   margin-bottom: 14px;
 }
 
-.tc-form-group label {
+.st-form-group label {
   margin-bottom: 6px;
 
   font-size: 14px;
@@ -178,9 +178,9 @@
   color: #334155;
 }
 
-.tc-form-group input,
-.tc-form-group textarea,
-.tc-form-group select {
+.st-form-group input,
+.st-form-group textarea,
+.st-form-group select {
   width: 100%;
 
   padding: 12px 14px;
@@ -195,16 +195,16 @@
   transition: all 0.2s ease;
 }
 
-.tc-form-group input:focus,
-.tc-form-group textarea:focus,
-.tc-form-group select:focus {
+.st-form-group input:focus,
+.st-form-group textarea:focus,
+.st-form-group select:focus {
   border-color: #2563eb;
 
   box-shadow:
     0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-.tc-form-group textarea {
+.st-form-group textarea {
   resize: vertical;
   min-height: 100px;
 }
@@ -213,7 +213,7 @@
    Form Row
 ========================= */
 
-.tc-form-row {
+.st-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -223,7 +223,7 @@
    Submit Button
 ========================= */
 
-.tc-submit-btn {
+.st-submit-btn {
   width: 100%;
 
   border: none;
@@ -247,7 +247,7 @@
   transition: all 0.3s ease;
 }
 
-.tc-submit-btn:hover {
+.st-submit-btn:hover {
   transform: translateY(-2px);
 
   box-shadow:
@@ -259,25 +259,25 @@
 ========================= */
 
 @media (max-width: 768px) {
-  .tc-page {
+  .st-page {
     padding: 16px;
   }
 
-  .tc-header {
+  .st-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
 
-  .tc-grid {
+  .st-grid {
     grid-template-columns: 1fr;
   }
 
-  .tc-form-row {
+  .st-form-row {
     grid-template-columns: 1fr;
   }
 
-  .tc-modal {
+  .st-modal {
     padding: 18px;
   }
 }
