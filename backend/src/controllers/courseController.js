@@ -1,5 +1,7 @@
 const courseValidator = require("../validators/courseValidator");
 const Course = require("../models/Course");
+const Enrollment = require("../models/Enrollment");
+
 async function createCourse(req, res) {
   const courseData = courseValidator(req);
   const newCourse = new Course(courseData);
@@ -77,7 +79,10 @@ async function getAllCourses(req, res) {
 
 async function getSingleCourse(req, res) {
   const courseId = req.params.courseId;
-  const course = await Course.findById(courseId).populate("teacher");
+  const course = await Course.findById(courseId).populate([
+    { path: "teacher" },
+    { path: "modules" },
+  ]);
   return res.send({ success: true, message: "Success", data: course });
 }
 
@@ -101,7 +106,28 @@ async function getTeacherCourses(req, res) {
   });
 }
 
-async function getStudentJoinedCourses(req, res) {}
+async function getStudentJoinedCourses(req, res) {
+  const { studentId } = req.params;
+  const courses = await Enrollment.find({ student: studentId }).populate(
+    "course",
+  );
+  const data = courses.map((course) => course.course);
+  return res.send({
+    success: true,
+    message: "Success",
+    data: data,
+  });
+}
+
+async function isStudentJoined(req, res) {
+  const courseId = req.params.courseId;
+  const user = req.user;
+  const isJoined = await Enrollment.findOne({
+    student: user._id,
+    course: courseId,
+  });
+  return res.send({ success: true, message: "Success", data: isJoined });
+}
 
 module.exports = {
   createCourse,
@@ -110,4 +136,6 @@ module.exports = {
   getSingleCourse,
   deleteCourse,
   getTeacherCourses,
+  getStudentJoinedCourses,
+  isStudentJoined,
 };

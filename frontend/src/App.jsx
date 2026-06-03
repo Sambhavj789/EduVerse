@@ -16,6 +16,7 @@ import QuizBuilder from "./components/QuizBuilder";
 import CreateLecture from "./pages/CreateLecture";
 import StudentCourses from "./pages/StudentCourses";
 import StudentLayout from "./layouts/StudentLayout";
+import CourseDetailedPage from "./pages/CourseDetailedPage";
 function App() {
   const pathName = document.location.pathname;
   const isShowHeader =
@@ -31,6 +32,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/course/:courseId" element={<CourseDetailedPage />} />
 
         {/* Teacher Routes */}
         <Route path="/teacher" element={<TeacherLayout />}>
@@ -48,6 +50,7 @@ function App() {
         {/* Student Routes */}
         <Route path="/student" element={<StudentLayout />}>
           <Route path="courses" element={<StudentCourses />} />
+          <Route path="course/:courseId/modules" element={<StudentCourses />} />
         </Route>
       </Routes>
       <Footer />

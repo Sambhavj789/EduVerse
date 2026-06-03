@@ -7,11 +7,28 @@ import CourseCard from "../components/CourseCard";
 import { useNavigate } from "react-router-dom";
 
 const StudentCourses = () => {
-  const [courses, sestourses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const { user } = useUser();
   const navigate = useNavigate();
-
-  useEffect(() => {}, []);
+  async function getStudentJoinedCourses() {
+    try {
+      if (!user) {
+        return;
+      }
+      const response = await api.get(
+        `/course/student-join-courses/${user._id}`,
+      );
+      if (response.data?.success) {
+        setCourses(response.data?.data);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || "Internal Server Error");
+    }
+  }
+  useEffect(() => {
+    getStudentJoinedCourses();
+  }, [user]);
 
   function handleCourseClick(data) {
     const courseId = data._id;

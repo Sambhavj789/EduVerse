@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import CourseCard from "../components/CourseCard";
 import "./Courses.css";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../utils/api";
 
@@ -36,6 +36,7 @@ function Courses() {
   const limit = Number(params.get("limit")) || 6;
   const selectedLevels = params.getAll("level") || [];
   const search = params.get("search") || "";
+  const navigate = useNavigate();
 
   async function getCourses() {
     try {
@@ -168,7 +169,7 @@ function Courses() {
                   key={course._id}
                   data={course}
                   mode="normal"
-                  onClick={() => alert(course.title)}
+                  onClick={() => navigate(`/course/${course._id}`)}
                 />
               ))}
             </div>
