@@ -32,7 +32,7 @@ const StudentCourses = () => {
 
   function handleCourseClick(data) {
     const courseId = data._id;
-    navigate(`/teacher/course-modules/${courseId}`);
+    navigate(`/student/course/${courseId}/modules`);
   }
 
   return (

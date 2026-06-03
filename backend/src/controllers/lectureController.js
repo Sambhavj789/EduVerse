@@ -166,8 +166,8 @@ async function streamVideo(req, res) {
   const end = Math.min(start + CHUNK_SIZE, fileSize - 1);
   const contentLength = end - start + 1;
   const headers = {
-    "Content-Range": `bytes ${start}-${end}`,
-    "Accept-Range": "bytes",
+    "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+    "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
     "Content-Type": "video/mp4",
   };

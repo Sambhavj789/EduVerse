@@ -1,146 +1,60 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from "react-router-dom";
-import "./CourseModule.css";
-import toast from 'react-hot-toast';
-import api from '../utils/api';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, useRoutes } from "react-router-dom";
+import "./StudentCourseModule.css";
+import toast from "react-hot-toast";
+import api from "../utils/api";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
-function CourseModules() {
-    const params = useParams();
-    const courseId = params.courseId;
-    const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
-    const [moduleTitle, setModuleTitle] = useState("");
-    const [modules, setModules] = useState([]);
-    async function getModules() {
-        const response = await api.get(`/modules/${courseId}`);
-        if (response.data?.success) {
-            setModules(response.data?.data);
-        }
+function StudentCourseModule() {
+  const params = useParams();
+  const courseId = params.courseId;
+  const navigate = useNavigate();
+  const [modules, setModules] = useState([]);
+  const [courseData, setCourseData] = useState({});
+  async function getCourseData() {
+    try {
+      const response = await api.get(`/course/${courseId}`);
+      if (response.data?.success) {
+        setCourseData(response.data?.data);
+        setModules(response.data?.data?.modules);
+      }
+    } catch (err) {
+      console.log(err);
     }
+  }
 
-    useEffect(() => {
-        getModules();
-    }, [])
+  useEffect(() => {
+    getCourseData();
+  }, []);
 
-    async function handleSubmit(e) {
-        try {
-            e.preventDefault();
-            const response = await api.post("/modules", { title: moduleTitle, course: courseId });
-            if (response.data?.success) {
-                toast.success("Module Created Successfully");
-                const newModuleTitle = response.data?.data;
-                setModules([...modules, newModuleTitle])
-            }
-        }
-        catch (err) {
-            console.log(err);
-            toast.error(err.response?.data?.message || "Internal Server Error");
-        }
-        finally {
-            setShowModal(false);
-        }
-    }
-    return (
-        <div className='modules-page'>
-            <div className="modules-header">
-
-                <div>
-                    <div className="module-path">
-                        <span onClick={() => {
-                            navigate(-1);
-                        }}>My Courses</span> <span>{">"}</span>
-                        <span>{courseId}</span>
-                    </div>
-                    <h1>My Course Modules</h1>
-                    <p>Manage and create your Modules</p>
-
-                </div>
-
-                <button
-                    className="add-module-btn"
-                    onClick={() => setShowModal(true)}
-                >
-                    + Add Module
-                </button>
-
-            </div>
-
-            <div className="modules-grid">
-
-                {
-                    modules.map((data, index) => {
-
-                        return (
-                            <div
-                                className='module-card'
-                                key={index}
-                                onClick={() =>
-                                    navigate(`/teacher/course-content/${data._id}`)
-                                }
-                            >
-                                <h2>
-                                    {data.title}
-                                </h2>
-
-                                <p>
-                                    Manage chapters, lectures,
-                                    quizzes and resources
-                                </p>
-
-                            </div>
-                        )
-                    })
-                }
-
-            </div>
-
-            {/* Modal */}
-            {
-                showModal && (
-                    <div className="modal-overlay">
-
-                        <div className="course-modal">
-
-                            <div className="modal-header">
-                                <h2>Add New Module</h2>
-
-                                <button
-                                    onClick={() => setShowModal(false)}
-                                >
-                                    ✕
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleSubmit}>
-
-                                <div className="form-group">
-                                    <label>Module Title</label>
-
-                                    <input
-                                        type="text"
-                                        name="title"
-                                        value={moduleTitle}
-                                        onChange={(e) => setModuleTitle(e.target.value)}
-                                        placeholder="Enter module title"
-                                        required
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="submit-btn"
-                                >
-                                    Create Module
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-                )
-            }
+  return (
+    <div className="st-modules-page">
+      <div className="st-modules-header">
+        <div>
+          <div className="back-btn">
+            <IoMdArrowRoundBack onClick={() => navigate(-1)} />
+          </div>
+          <h1>{courseData?.title} Modules</h1>
         </div>
-    )
+      </div>
+
+      <div className="st-modules-grid">
+        {modules.map((data, index) => {
+          return (
+            <div
+              className="module-card"
+              key={index}
+              onClick={() => navigate(`/student/course/course-content/${data._id}`)}
+            >
+              <h2>{data.title}</h2>
+
+              <p>Manage chapters, lectures, quizzes and resources</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
-export default CourseModules
+export default StudentCourseModule;

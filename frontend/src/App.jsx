@@ -17,6 +17,9 @@ import CreateLecture from "./pages/CreateLecture";
 import StudentCourses from "./pages/StudentCourses";
 import StudentLayout from "./layouts/StudentLayout";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
+import StudentCourseModule from "./pages/StudentCourseModule";
+import StudentCourseContent from "./pages/StudentCourseContent";
+import StudentLectureDetails from "./pages/StudentLectureDetail";
 function App() {
   const pathName = document.location.pathname;
   const isShowHeader =
@@ -50,7 +53,18 @@ function App() {
         {/* Student Routes */}
         <Route path="/student" element={<StudentLayout />}>
           <Route path="courses" element={<StudentCourses />} />
-          <Route path="course/:courseId/modules" element={<StudentCourses />} />
+          <Route
+            path="course/:courseId/modules"
+            element={<StudentCourseModule />}
+          />
+          <Route
+            path="course/course-content/:moduleId"
+            element={<StudentCourseContent />}
+          />
+          <Route
+            path="course/lecture-detail/:lectureId"
+            element={<StudentLectureDetails />}
+          />
         </Route>
       </Routes>
       <Footer />
