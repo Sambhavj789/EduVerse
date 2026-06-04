@@ -1,5 +1,6 @@
 const Lecture = require("../models/Lecture");
 const Progress = require("../models/Progress");
+const Enrollment = require("../models/Enrollment")
 async function markLectureComplete(req, res) {
   const { studentId, courseId, lectureId } = req.body;
   const studentProgressData = await Progress.findOne({
@@ -60,4 +61,72 @@ async function submitQuiz(req, res) {
   });
 }
 
-module.exports = { markLectureComplete, markLectureInComplete, submitQuiz };
+async function getStudentQuizProgress(req, res) {
+  const { studentId, courseId } = req.params;
+
+  const progress = await Progress.findOne({
+    student: studentId,
+    course: courseId,
+  }).populate("completedQuizzes.quiz");
+
+  if (!progress) {
+    return res.send({
+      success: true,
+      data: [],
+    });
+  }
+
+  return res.send({
+    success: true,
+    data: progress.completedQuizzes,
+  });
+}
+
+async function getStudentDashboard(req, res) {
+  const { studentId } = req.params;
+
+  const enrollments = await Enrollment.find({
+    student: studentId,
+  }).populate("course");
+
+  const progress = await Progress.find({
+    student: studentId,
+  });
+
+  const totalCourses = enrollments.length;
+
+  const totalLectures = progress.reduce(
+    (acc, curr) => acc + curr.completedLectures.length,
+    0,
+  );
+
+  const totalQuizzes = progress.reduce(
+    (acc, curr) => acc + curr.completedQuizzes.length,
+    0,
+  );
+
+  const avgProgress =
+    progress.length > 0
+      ? progress.reduce((acc, curr) => acc + curr.overallProgress, 0) /
+        progress.length
+      : 0;
+
+  res.send({
+    success: true,
+    data: {
+      totalCourses,
+      totalLectures,
+      totalQuizzes,
+      avgProgress,
+      courses: enrollments.map((e) => e.course),
+    },
+  });
+}
+
+module.exports = {
+  markLectureComplete,
+  markLectureInComplete,
+  submitQuiz,
+  getStudentQuizProgress,
+  getStudentDashboard
+};

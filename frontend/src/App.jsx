@@ -20,6 +20,7 @@ import CourseDetailedPage from "./pages/CourseDetailedPage";
 import StudentCourseModule from "./pages/StudentCourseModule";
 import StudentCourseContent from "./pages/StudentCourseContent";
 import StudentLectureDetails from "./pages/StudentLectureDetail";
+import StudentDashboard from "./pages/StudentDashboard";
 function App() {
   const pathName = document.location.pathname;
   const isShowHeader =
@@ -65,6 +66,7 @@ function App() {
             path="course/:courseId/lecture-detail/:lectureId"
             element={<StudentLectureDetails />}
           />
+          <Route path="dashboard" element={<StudentDashboard />} />
         </Route>
       </Routes>
       <Footer />

@@ -1,8 +1,8 @@
 /* ==========================
-   TEACHER LAYOUT
+   LAYOUT
 ========================== */
 
-.teacher-layout {
+.student-layout {
     display: flex;
 
     min-height: 100vh;
@@ -14,21 +14,19 @@
    CONTENT
 ========================== */
 
-.teacher-layout-content {
+.student-layout-content {
     flex: 1;
 
     min-width: 0;
 
     overflow-x: hidden;
-
-    width: 100%;
 }
 
 /* ==========================
    LOADER
 ========================== */
 
-.teacher-layout-loader {
+.student-layout-loader {
     min-height: 100vh;
 
     display: flex;
@@ -47,7 +45,7 @@
 
 @media (max-width:1024px) {
 
-    .teacher-layout-content {
+    .student-layout-content {
         width: 100%;
     }
 
@@ -59,16 +57,14 @@
 
 @media (max-width:768px) {
 
-    .teacher-layout {
+    .student-layout {
         display: block;
     }
 
-    .teacher-layout-content {
+    .student-layout-content {
         width: 100%;
 
-        padding-top: 75px;
-
-        min-height: 100vh;
+        padding-top: 70px;
     }
 
 }

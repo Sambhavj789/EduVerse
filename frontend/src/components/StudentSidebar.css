@@ -1,16 +1,16 @@
-.teacher-sidebar {
+.student-sidebar {
     width: 280px;
     height: 100vh;
 
     background: white;
 
-    border-right: 1px solid #e5e7eb;
-
-    padding: 20px;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    padding: 20px;
+
+    border-right: 1px solid #e5e7eb;
 
     position: sticky;
     top: 0;
@@ -20,7 +20,7 @@
 
 /* HEADER */
 
-.teacher-sidebar-header {
+.sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -28,8 +28,8 @@
 
 .sidebar-logo-section {
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
 }
 
 .sidebar-logo {
@@ -66,11 +66,11 @@
 }
 
 .sidebar-item {
+    width: 100%;
+
     display: flex;
     align-items: center;
     gap: 12px;
-
-    width: 100%;
 
     padding: 14px;
 
@@ -98,19 +98,22 @@
     font-weight: 600;
 }
 
+.logout-btn {
+    color: #ef4444;
+}
+
 /* PROFILE */
 
-.teacher-profile {
+.student-profile {
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
 
     padding-top: 20px;
-
     border-top: 1px solid #e5e7eb;
 }
 
-.teacher-profile img {
+.student-profile img {
     width: 48px;
     height: 48px;
 
@@ -119,34 +122,32 @@
     object-fit: cover;
 }
 
-.teacher-profile h4 {
+.student-profile h4 {
     font-size: 14px;
 }
 
-.teacher-profile p {
-    color: #64748b;
+.student-profile p {
     font-size: 12px;
+    color: #64748b;
 
     overflow: hidden;
-    white-space: nowrap;
     text-overflow: ellipsis;
+    white-space: nowrap;
 
     max-width: 160px;
 }
 
-.logout-btn {
-    color: #ef4444;
-}
+/* MOBILE */
 
-/* MOBILE BUTTON */
-
-.teacher-mobile-menu-btn {
+.mobile-sidebar-btn {
     display: none;
 
     position: fixed;
 
     top: 15px;
     left: 15px;
+
+    z-index: 1001;
 
     width: 45px;
     height: 45px;
@@ -157,24 +158,20 @@
 
     background: white;
 
-    z-index: 1001;
-
     box-shadow:
         0 5px 15px rgba(0,0,0,.1);
 
     cursor: pointer;
 }
 
-.teacher-sidebar-close {
+.close-sidebar {
     display: none;
-
     border: none;
     background: transparent;
-
     cursor: pointer;
 }
 
-.teacher-sidebar-overlay {
+.sidebar-overlay {
     position: fixed;
     inset: 0;
 
@@ -187,17 +184,17 @@
 
 @media(max-width:768px){
 
-    .teacher-mobile-menu-btn{
+    .mobile-sidebar-btn{
         display:flex;
         justify-content:center;
         align-items:center;
     }
 
-    .teacher-sidebar-close{
+    .close-sidebar{
         display:block;
     }
 
-    .teacher-sidebar{
+    .student-sidebar{
         position: fixed;
 
         left: -300px;
@@ -211,7 +208,7 @@
             0 0 30px rgba(0,0,0,.15);
     }
 
-    .teacher-sidebar-open{
+    .sidebar-open{
         left: 0;
     }
 }

@@ -1,22 +1,42 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useUser } from "../context/UserContext"
+import { useUser } from "../context/UserContext";
+
 import StudentSidebar from "../components/StudentSidebar";
-import "./TeacherLayout.css";
+
+import "./StudentLayout.css";
+
 function StudentLayout() {
-    const { user, loading } = useUser();
-    // console.log(user, loading);
-    if (loading) {
-        return <h1>Loading...</h1>
-    }
-    if (user && user.role == "student") {
-        return <div className="teacher-layout">
-            <StudentSidebar />
-            <Outlet />
-        </div>;
-    }
-    else {
-        return <Navigate to="/login" />
-    }
+  const { user, loading } =
+    useUser();
+
+  if (loading) {
+    return (
+      <div className="student-layout-loader">
+        Loading...
+      </div>
+    );
+  }
+
+  if (
+    !user ||
+    user.role !== "student"
+  ) {
+    return (
+      <Navigate to="/login" />
+    );
+  }
+
+  return (
+    <div className="student-layout">
+
+      <StudentSidebar />
+
+      <main className="student-layout-content">
+        <Outlet />
+      </main>
+
+    </div>
+  );
 }
 
 export default StudentLayout;
