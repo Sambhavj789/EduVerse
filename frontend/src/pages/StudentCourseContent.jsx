@@ -17,6 +17,7 @@ function StudentCourseContent() {
 
   const [chapters, setChapters] = useState([]);
   const [moduleData,setModuleData] = useState({});
+  const [courseId,setCourseId] = useState(null);
   const IMAGE_API_URL = "http://localhost:4000/uploads/"
   function toggleChapter(id) {
     if (expandedChapter === id) {
@@ -29,6 +30,7 @@ function StudentCourseContent() {
     try {
       const response = await api.get(`/modules/single-module/${moduleId}`);
       if (response.data?.success) {
+        setCourseId(response.data?.data?.course);
         setChapters(response.data?.data?.chapters);
         setModuleData(response.data?.data);
       }
@@ -88,7 +90,7 @@ function StudentCourseContent() {
                         className="lecture-card"
                         key={index}
                         onClick={() => {
-                          navigate(`/student/course/lecture-detail/${lecture._id}`);
+                          navigate(`/student/course/${courseId}/lecture-detail/${lecture._id}`);
                         }}
                       >
                         <span className="lecture-number">{index + 1}</span>

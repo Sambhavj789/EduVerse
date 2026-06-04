@@ -12,6 +12,7 @@ const chapterRoutes = require("./routes/chapterRoutes");
 const lectureRoutes = require("./routes/lectureRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const progressRoutes = require("./routes/progressRoutes");
 const path = require("path");
 
 const app = express();
@@ -35,7 +36,8 @@ app.use("/api/v1/modules",moduleRoutes);
 app.use("/api/v1/chapters",chapterRoutes);
 app.use("/api/v1/lectures",lectureRoutes);
 app.use("/api/v1/quizes",quizRoutes);
-app.use("/api/v1/enrollement",enrollmentRoutes)
+app.use("/api/v1/enrollement",enrollmentRoutes);
+app.use("/api/v1/progress",progressRoutes);
 
 app.use(errorMiddleware); // Using errorMiddleware globally
 const PORT = process.env.PORT || 4000;

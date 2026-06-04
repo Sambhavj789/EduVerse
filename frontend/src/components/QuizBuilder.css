@@ -47,6 +47,11 @@
     background: white;
 }
 
+.current-step {
+    background: var(--green);
+    color: white;
+}
+
 .quiz-form-card {
     background: white;
     border-radius: 24px;
