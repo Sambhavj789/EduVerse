@@ -7,9 +7,7 @@ import CourseCard from "../components/CourseCard";
 import { useNavigate } from "react-router-dom";
 
 const TeacherCourses = () => {
-  const [showModal, setShowModal] = useState(false);
-
-  const [courseData, setCourseData] = useState({
+  const initialCourseData = {
     title: "",
     description: "",
     thumbnail: null,
@@ -21,15 +19,30 @@ const TeacherCourses = () => {
     learningOutcomes: "",
     totalDuration: "",
     totalLectures: "",
-  });
+  };
+  const [showModal, setShowModal] = useState(false);
+
+  const [courseData, setCourseData] = useState(initialCourseData);
   const [courses, setCourses] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
   const navigate = useNavigate();
+
+  function parseCommaSeparated(value) {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
   async function getAllCoursesByTeacher() {
     try {
+      if (!user?._id) {
+        return;
+      }
+
       const response = await api.get(`/course/teacher-courses/${user._id}`);
       if (response.data?.success) {
-        console.log(response.data?.data);
         setCourses(response.data?.data);
       }
     } catch (err) {
@@ -40,7 +53,7 @@ const TeacherCourses = () => {
 
   useEffect(() => {
     getAllCoursesByTeacher();
-  }, []);
+  }, [user]);
 
   const handleChange = (e) => {
     setCourseData({
@@ -52,36 +65,47 @@ const TeacherCourses = () => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+      setIsSubmitting(true);
+
+      const requirements = parseCommaSeparated(courseData.requirements);
+      const learningOutcomes = parseCommaSeparated(courseData.learningOutcomes);
+
+      if (!requirements.length || !learningOutcomes.length) {
+        toast.error("Requirements and learning outcomes are required");
+        return;
+      }
 
       const finalData = {
         ...courseData,
-
-        requirements: courseData.requirements
-          .split(",")
-          .map((item) => item.trim()),
-
-        learningOutcomes: courseData.learningOutcomes
-          .split(",")
-          .map((item) => item.trim()),
+        requirements,
+        learningOutcomes,
         teacher: user._id,
       };
+
       const formData = new FormData();
       for (let field in finalData) {
+        if (field === "requirements" || field === "learningOutcomes") {
+          formData.append(field, JSON.stringify(finalData[field]));
+          continue;
+        }
+
         formData.append(field, finalData[field]);
       }
+
       const response = await api.post("/course/create", formData);
       if (response.data?.success) {
         toast.success(response.data?.message);
         const newCourse = response.data?.courseData;
         setCourses([...courses, newCourse]);
+        setCourseData(initialCourseData);
+        setShowModal(false);
       }
-      console.log(response);
     } catch (err) {
       console.log(err);
-      toast.error(err.response.data?.message || "Internal Server Error");
+      toast.error(err.response?.data?.message || "Internal Server Error");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setShowModal(false);
   };
 
   function handleFileChange(e) {
@@ -112,14 +136,21 @@ const TeacherCourses = () => {
 
         {/* Courses Grid */}
         <div className="tc-grid">
-          {courses.map((data, index) => (
-            <CourseCard
-              key={index}
-              data={data}
-              mode="teacher"
-              onClick={() => handleCourseClick(data)}
-            />
-          ))}
+          {courses.length ? (
+            courses.map((data, index) => (
+              <CourseCard
+                key={index}
+                data={data}
+                mode="teacher"
+                onClick={() => handleCourseClick(data)}
+              />
+            ))
+          ) : (
+            <div className="tc-empty-state">
+              <h3>No courses yet</h3>
+              <p>Create your first course to start building modules, chapters, and lectures.</p>
+            </div>
+          )}
         </div>
 
         {/* Modal */}
@@ -127,7 +158,10 @@ const TeacherCourses = () => {
           <div className="tc-modal-overlay">
             <div className="tc-modal">
               <div className="tc-modal-header">
-                <h2>Add New Course</h2>
+                <div>
+                  <h2>Create New Course</h2>
+                  <p>Set up the course basics, media, and student outcomes.</p>
+                </div>
 
                 <button
                   className="tc-close-btn"
@@ -139,6 +173,12 @@ const TeacherCourses = () => {
               </div>
 
               <form onSubmit={handleSubmit}>
+                <div className="tc-form-section">
+                  <div className="tc-section-title">
+                    <h3>Core Details</h3>
+                    <p>These details are shown to students before they join.</p>
+                  </div>
+
                 <div className="tc-form-group">
                   <label>Course Title</label>
 
@@ -163,6 +203,13 @@ const TeacherCourses = () => {
                     required
                   />
                 </div>
+                </div>
+
+                <div className="tc-form-section">
+                  <div className="tc-section-title">
+                    <h3>Media</h3>
+                    <p>Upload a clean thumbnail and a trailer video for the preview page.</p>
+                  </div>
 
                 <div className="tc-form-row">
                   <div className="tc-form-group">
@@ -174,6 +221,7 @@ const TeacherCourses = () => {
                       onChange={handleFileChange}
                       required
                     />
+                    <small>Best for cards and course landing preview.</small>
                   </div>
 
                   <div className="tc-form-group">
@@ -185,8 +233,16 @@ const TeacherCourses = () => {
                       onChange={handleFileChange}
                       required
                     />
+                    <small>Upload a short trailer so students can preview the course.</small>
                   </div>
                 </div>
+                </div>
+
+                <div className="tc-form-section">
+                  <div className="tc-section-title">
+                    <h3>Metadata</h3>
+                    <p>Use accurate tags so students can find the course easily.</p>
+                  </div>
 
                 <div className="tc-form-row">
                   <div className="tc-form-group">
@@ -244,17 +300,34 @@ const TeacherCourses = () => {
                   </div>
                 </div>
 
-                <div className="tc-form-group">
-                  <label>Total Lectures</label>
+                <div className="tc-form-row">
+                  <div className="tc-form-group">
+                    <label>Total Lectures</label>
 
-                  <input
-                    type="number"
-                    name="totalLectures"
-                    placeholder="45"
-                    value={courseData.totalLectures}
-                    onChange={handleChange}
-                  />
+                    <input
+                      type="number"
+                      name="totalLectures"
+                      placeholder="45"
+                      value={courseData.totalLectures}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="tc-form-preview-card">
+                    <span>Quick Preview</span>
+                    <strong>{courseData.title || "Untitled Course"}</strong>
+                    <p>
+                      {courseData.category || "Category"} • {courseData.level || "Level"} • {courseData.language || "Language"}
+                    </p>
+                  </div>
                 </div>
+                </div>
+
+                <div className="tc-form-section">
+                  <div className="tc-section-title">
+                    <h3>Student Value</h3>
+                    <p>Separate each item with a comma. Every point will show as its own bullet/chip.</p>
+                  </div>
 
                 <div className="tc-form-group">
                   <label>Requirements</label>
@@ -265,6 +338,7 @@ const TeacherCourses = () => {
                     value={courseData.requirements}
                     onChange={handleChange}
                   />
+                  <small>{parseCommaSeparated(courseData.requirements).length} requirement item(s)</small>
                 </div>
 
                 <div className="tc-form-group">
@@ -276,11 +350,19 @@ const TeacherCourses = () => {
                     value={courseData.learningOutcomes}
                     onChange={handleChange}
                   />
+                  <small>{parseCommaSeparated(courseData.learningOutcomes).length} outcome item(s)</small>
+                </div>
                 </div>
 
-                <button type="submit" className="tc-submit-btn">
-                  Create Course
-                </button>
+                <div className="tc-form-actions">
+                  <button type="button" className="tc-secondary-btn" onClick={() => setShowModal(false)}>
+                    Cancel
+                  </button>
+
+                  <button type="submit" className="tc-submit-btn" disabled={isSubmitting}>
+                    {isSubmitting ? "Creating..." : "Create Course"}
+                  </button>
+                </div>
               </form>
             </div>
           </div>

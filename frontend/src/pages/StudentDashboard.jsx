@@ -187,7 +187,7 @@ function StudentDashboard() {
                 mode="dashboard"
                 onClick={() =>
                   navigate(
-                    `/student/course/${course._id}`
+                    `/student/course/${course._id}/modules`
                   )
                 }
               />

@@ -1,7 +1,10 @@
 .course-content-page {
+    width: 100%;
+    min-width: 0;
     min-height: 100vh;
     background: #f5f7fb;
     padding: 30px;
+    overflow-x: hidden;
 }
 
 .content-header {
@@ -9,6 +12,11 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    gap: 24px;
+    padding: 28px;
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 .content-header h1 {
@@ -19,6 +27,26 @@
 
 .content-header p {
     color: #6b7280;
+}
+
+.module-path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #4f46e5;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.module-path-link {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.module-path-link:hover {
+    color: #312e81;
 }
 
 .add-chapter-btn {
@@ -57,6 +85,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
     padding: 22px;
     cursor: pointer;
 }
@@ -94,6 +123,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .lectures-container {
@@ -111,6 +141,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    cursor: pointer;
 }
 
 .lecture-number {
@@ -141,7 +172,7 @@
 }
 
 .custom-modal {
-    width: 500px;
+    width: min(500px, calc(100vw - 32px));
     background: white;
     border-radius: 20px;
     padding: 25px;
@@ -209,4 +240,58 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .content-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-chapter-btn {
+        justify-content: center;
+    }
+
+    .chapter-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-lecture-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .course-content-page {
+        padding: 16px;
+    }
+
+    .content-header {
+        padding: 20px;
+    }
+
+    .content-header h1 {
+        font-size: 26px;
+    }
+
+    .chapter-header,
+    .lectures-container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .chapter-left,
+    .lecture-card {
+        align-items: flex-start;
+    }
+
+    .lecture-number {
+        flex-shrink: 0;
+    }
+
+    .custom-modal {
+        padding: 20px;
+    }
 }

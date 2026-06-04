@@ -9,6 +9,7 @@ function PopularCourses() {
             category: "Web Development",
             level: "beginner",
             teacher: "Rajesh Verma",
+            description: "Build APIs, databases, and modern full-stack apps from scratch.",
             thumbnail: "mern-course.png"
         },
         {
@@ -16,13 +17,15 @@ function PopularCourses() {
             category: "Frontend",
             level: "intermediate",
             teacher: "Rahul Sharma",
+            description: "Master React patterns, reusable UI architecture, and production workflows.",
             thumbnail: "react-course.png"
         },
         {
             title: "Node.js Mastery",
             category: "Backend",
-            level: "advanced",
+            level: "advance",
             teacher: "Aman Verma",
+            description: "Create scalable backend services with authentication, performance, and clean architecture.",
             thumbnail: "node-course.png"
         }
     ]

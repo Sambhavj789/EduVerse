@@ -85,6 +85,7 @@ function Courses() {
     params.delete("level");
     params.delete("language");
     params.set("page", 1);
+    params.delete("search");
     setParams(params);
   }
   return (

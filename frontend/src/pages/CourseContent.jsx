@@ -21,6 +21,7 @@ function CourseContent() {
     const [chapterTitle, setChapterTitle] = useState("");
 
     const [chapters, setChapters] = useState([]);
+    const [moduleData, setModuleData] = useState(null);
 
     function toggleChapter(id) {
         if (expandedChapter === id) {
@@ -31,9 +32,10 @@ function CourseContent() {
     }
     async function getAllChapters() {
         try {
-            const response = await api.get(`/chapters/${moduleId}`);
+            const response = await api.get(`/modules/single-module/${moduleId}`);
             if (response.data?.success) {
-                setChapters(response.data?.data);
+                setModuleData(response.data?.data);
+                setChapters(response.data?.data?.chapters || []);
             }
         }
         catch (err) {
@@ -72,17 +74,17 @@ function CourseContent() {
 
                 <div>
                     <div className="module-path">
-                        <span onClick={() => {
-                            navigate(-2);
+                        <span className="module-path-link" onClick={() => {
+                            navigate("/teacher/courses");
                         }}>My Courses</span> <span>{">"}</span>
-                        <span onClick={() => {
-                            navigate(-1);
-                        }}>Course</span> <span>{">"}</span>
-                        <span>{moduleId}</span>
+                        <span className="module-path-link" onClick={() => {
+                            navigate(`/teacher/course-modules/${moduleData?.course?._id}`);
+                        }}>{moduleData?.course?.title || "Course"}</span> <span>{">"}</span>
+                        <span>{moduleData?.title || "Course Content"}</span>
                     </div>
 
-                    <h1>Course Content</h1>
-                    <p>Manage Chapters and Lectures</p>
+                    <h1>{moduleData?.title || "Course Content"}</h1>
+                    <p>Manage chapters and lectures</p>
                 </div>
 
                 <button
@@ -101,7 +103,7 @@ function CourseContent() {
                 {
                     chapters.map((chapter) => {
 
-                        const isOpen = expandedChapter === chapter.id;
+                        const isOpen = expandedChapter === chapter._id;
 
                         return (
                             <div
@@ -112,7 +114,7 @@ function CourseContent() {
                                 {/* Header */}
                                 <div
                                     className="chapter-header"
-                                    onClick={() => toggleChapter(chapter.id)}
+                                    onClick={() => toggleChapter(chapter._id)}
                                 >
 
                                     <div className="chapter-left">

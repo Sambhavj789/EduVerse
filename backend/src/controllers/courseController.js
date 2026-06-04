@@ -1,6 +1,8 @@
 const courseValidator = require("../validators/courseValidator");
 const Course = require("../models/Course");
 const Enrollment = require("../models/Enrollment");
+const Module = require("../models/Module");
+const Chapter = require("../models/Chapter");
 
 async function createCourse(req, res) {
   const courseData = courseValidator(req);
@@ -106,6 +108,72 @@ async function getTeacherCourses(req, res) {
   });
 }
 
+async function getTeacherDashboard(req, res) {
+  const { teacherId } = req.params;
+
+  const courses = await Course.find({ teacher: teacherId })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  const courseIds = courses.map((course) => course._id);
+  const modules = await Module.find({ course: { $in: courseIds } }).lean();
+  const chapterIds = modules.flatMap((module) => module.chapters || []);
+  const chapters = await Chapter.find({ _id: { $in: chapterIds } }).lean();
+  const enrollments = await Enrollment.aggregate([
+    {
+      $match: {
+        course: { $in: courseIds },
+      },
+    },
+    {
+      $group: {
+        _id: "$course",
+        totalStudents: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const studentCountByCourse = new Map(
+    enrollments.map((item) => [item._id.toString(), item.totalStudents]),
+  );
+
+  const totalCourses = courses.length;
+  const totalModules = modules.length;
+  const totalChapters = chapters.length;
+  const totalLectures = chapters.reduce(
+    (count, chapter) => count + (chapter.lectures?.length || 0),
+    0,
+  );
+  const totalStudents = enrollments.reduce(
+    (count, item) => count + item.totalStudents,
+    0,
+  );
+  const totalDuration = courses.reduce(
+    (count, course) => count + (course.totalDuration || 0),
+    0,
+  );
+
+  const recentCourses = courses.slice(0, 3).map((course) => ({
+    ...course,
+    moduleCount: course.modules?.length || 0,
+    studentCount: studentCountByCourse.get(course._id.toString()) || 0,
+  }));
+
+  return res.send({
+    success: true,
+    message: "Success",
+    data: {
+      totalCourses,
+      totalModules,
+      totalChapters,
+      totalLectures,
+      totalStudents,
+      totalDuration,
+      recentCourses,
+    },
+  });
+}
+
 async function getStudentJoinedCourses(req, res) {
   const { studentId } = req.params;
   const courses = await Enrollment.find({ student: studentId }).populate(
@@ -136,6 +204,7 @@ module.exports = {
   getSingleCourse,
   deleteCourse,
   getTeacherCourses,
+  getTeacherDashboard,
   getStudentJoinedCourses,
   isStudentJoined,
 };

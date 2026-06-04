@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LectureDetails.css";
 import {
     FaVideo,
-    FaQuestionCircle,
-    FaFileAlt,
     FaUpload,
-    FaPlus
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
@@ -22,7 +19,25 @@ function CreateLecture() {
     const [lectureThumbnail, setLectureThumbnail] = useState(null);
     const [lectureDescription, setLectureDesciprtion] = useState("");
     const [lectureDuration, setLectureDuration] = useState("");
+    const [chapterData, setChapterData] = useState(null);
 
+    async function getChapterData() {
+        try {
+            const response = await api.get(`/chapters/single/${chapterId}`);
+
+            if (response.data?.success) {
+                setChapterData(response.data?.data);
+            }
+        }
+        catch (err) {
+            console.log(err);
+            toast.error(err.response?.data?.message || "Internal Server Error");
+        }
+    }
+
+    useEffect(() => {
+        getChapterData();
+    }, []);
 
     async function handleSubmit() {
         try {
@@ -30,12 +45,13 @@ function CreateLecture() {
             formData.append("chapter", chapterId);
             formData.append("title", lectureTitle);
             formData.append("description", lectureDescription);
+            formData.append("duration", lectureDuration);
             formData.append("thumbnail", lectureThumbnail);
             formData.append("videoUrl", videoFile);
             const response = await api.post("/lectures", formData);
             if (response.data?.success) {
                 toast.success("Lecture Uploaded Sucessfully");
-                navigate(-1);
+                navigate(`/teacher/course-content/${chapterData?.module?._id || chapterData?.module}`);
             }
         }
         catch (err) {
@@ -52,18 +68,21 @@ function CreateLecture() {
 
                 <div>
                     <div className="module-path">
-                        <span onClick={() => {
-                            navigate(-2);
+                        <span className="module-path-link" onClick={() => {
+                            navigate("/teacher/courses");
                         }}>My Courses</span> <span>{">"}</span>
-                        <span onClick={() => {
-                            navigate(-1);
-                        }}>Course</span> <span>{">"}</span>
-                        <span>{chapterId}</span>
+                        <span className="module-path-link" onClick={() => {
+                            navigate(`/teacher/course-modules/${chapterData?.module?.course?._id || chapterData?.module?.course}`);
+                        }}>{chapterData?.module?.course?.title || "Course"}</span> <span>{">"}</span>
+                        <span className="module-path-link" onClick={() => {
+                            navigate(`/teacher/course-content/${chapterData?.module?._id || chapterData?.module}`);
+                        }}>{chapterData?.module?.title || "Module"}</span> <span>{">"}</span>
+                        <span>{chapterData?.title || "Add Lecture"}</span>
                     </div>
 
-                    <h1>Lecture Management</h1>
+                    <h1>Create Lecture</h1>
                     <p>
-                        Manage video, quizzes and resources
+                        Add lesson details, thumbnail, and video content
                     </p>
                 </div>
 

@@ -3,8 +3,7 @@
     padding: 0px 60px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    height: 300px;
+    gap: 16px;
 }
 
 .features>p {
@@ -17,10 +16,17 @@
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     gap: 30px;
+    align-items: start;
 }
 
 .features-left {
     display: flex;
+}
+
+.features-left h1 {
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    color: var(--text);
 }
 
 .features-right {
@@ -32,20 +38,43 @@
 .features-card {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     background-color: var(--white);
-    padding: 20px;
+    padding: 24px;
     border-radius: 20px;
-    /* align-items: center; */
+    min-width: 0;
+    box-shadow: var(--shadow);
+}
+
+.feature-icon-wrap {
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
 }
 
 .feature-icon {
-    font-size: 60px;
-    margin: auto;
-    background-color: var(--purple);
+    font-size: 30px;
     color: var(--white);
-    padding: 10px;
-    border-radius: 50%;
+}
+
+.feature-accent-blue {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.feature-accent-purple {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+}
+
+.feature-accent-green {
+    background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.feature-accent-orange {
+    background: linear-gradient(135deg, #f97316, #ea580c);
 }
 
 .features-card>h2 {
@@ -55,14 +84,34 @@
 .features-card>p {
     font-size: 16px;
     color: var(--text-light);
+    line-height: 1.7;
 }
 
 @media (width < 1100px) {
+    .features {
+        padding: 0px 40px;
+    }
+
     .features-main {
         grid-template-columns: 1fr;
     }
 
     .features-right {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .features {
+        padding: 0px 16px;
+        margin-top: 28px;
+    }
+
+    .features-right {
+        grid-template-columns: 1fr;
+    }
+
+    .features-card {
+        padding: 20px;
     }
 }

@@ -75,7 +75,9 @@ async function getModules(req, res) {
 
 async function getSingleModule(req, res) {
   const { moduleId } = req.params;
-  const moduleData = await Module.findById(moduleId).populate({path:"chapters",populate:{path:"lectures"}});
+  const moduleData = await Module.findById(moduleId)
+    .populate("course", "title")
+    .populate({ path: "chapters", populate: { path: "lectures" } });
   return res.send({ success: true, message: "Success", data: moduleData });
 }
 module.exports = { createModule, updateModule, deleteModule, getModules,getSingleModule };

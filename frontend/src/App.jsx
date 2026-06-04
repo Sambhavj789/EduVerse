@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -14,6 +14,7 @@ import CourseContent from "./pages/CourseContent";
 import LectureDetails from "./pages/LectureDetails";
 import QuizBuilder from "./components/QuizBuilder";
 import CreateLecture from "./pages/CreateLecture";
+import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentLayout from "./layouts/StudentLayout";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
@@ -21,14 +22,15 @@ import StudentCourseModule from "./pages/StudentCourseModule";
 import StudentCourseContent from "./pages/StudentCourseContent";
 import StudentLectureDetails from "./pages/StudentLectureDetail";
 import StudentDashboard from "./pages/StudentDashboard";
-function App() {
-  const pathName = document.location.pathname;
-  const isShowHeader =
-    !pathName.includes("/teacher") && !pathName.includes("/student");
+
+function AppShell() {
+  const { pathname } = useLocation();
+  const isPanelRoute =
+    pathname.startsWith("/teacher") || pathname.startsWith("/student");
 
   return (
-    <BrowserRouter>
-      {isShowHeader && <Header />}
+    <>
+      {!isPanelRoute && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -40,6 +42,8 @@ function App() {
 
         {/* Teacher Routes */}
         <Route path="/teacher" element={<TeacherLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<TeacherDashboard />} />
           <Route path="courses" element={<TeacherCourses />} />
           <Route path="course-modules/:courseId" element={<CourseModules />} />
           <Route path="course-content/:moduleId" element={<CourseContent />} />
@@ -53,6 +57,7 @@ function App() {
 
         {/* Student Routes */}
         <Route path="/student" element={<StudentLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="courses" element={<StudentCourses />} />
           <Route
             path="course/:courseId/modules"
@@ -69,7 +74,15 @@ function App() {
           <Route path="dashboard" element={<StudentDashboard />} />
         </Route>
       </Routes>
-      <Footer />
+      {!isPanelRoute && <Footer />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
     </BrowserRouter>
   );
 }

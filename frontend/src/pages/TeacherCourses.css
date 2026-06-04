@@ -13,6 +13,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  gap: 16px;
 }
 
 .tc-header h1 {
@@ -63,6 +64,20 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+}
+
+.tc-empty-state {
+  padding: 28px;
+  border-radius: 24px;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  color: #475569;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.tc-empty-state h3 {
+  color: #0f172a;
+  margin-bottom: 8px;
 }
 
 /* =========================
@@ -127,6 +142,7 @@
   align-items: center;
 
   margin-bottom: 20px;
+  gap: 20px;
 }
 
 .tc-modal-header h2 {
@@ -136,6 +152,12 @@
   font-weight: 700;
 
   color: #0f172a;
+}
+
+.tc-modal-header p {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 14px;
 }
 
 .tc-close-btn {
@@ -167,6 +189,13 @@
   flex-direction: column;
 
   margin-bottom: 14px;
+}
+
+.tc-form-group small {
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .tc-form-group label {
@@ -209,6 +238,29 @@
   min-height: 100px;
 }
 
+.tc-form-section {
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #fbfdff;
+}
+
+.tc-section-title {
+  margin-bottom: 14px;
+}
+
+.tc-section-title h3 {
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.tc-section-title p {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 /* =========================
    Form Row
 ========================= */
@@ -219,17 +271,41 @@
   gap: 16px;
 }
 
+.tc-form-preview-card {
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+  border: 1px solid #dbeafe;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tc-form-preview-card span {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.tc-form-preview-card strong {
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.tc-form-preview-card p {
+  color: #475569;
+  line-height: 1.6;
+}
+
 /* =========================
    Submit Button
 ========================= */
 
 .tc-submit-btn {
-  width: 100%;
-
   border: none;
   cursor: pointer;
-
-  margin-top: 8px;
 
   padding: 14px;
 
@@ -245,6 +321,29 @@
   font-weight: 600;
 
   transition: all 0.3s ease;
+}
+
+.tc-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.tc-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.tc-secondary-btn {
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .tc-submit-btn:hover {
@@ -269,6 +368,10 @@
     gap: 12px;
   }
 
+  .tc-add-btn {
+    width: 100%;
+  }
+
   .tc-grid {
     grid-template-columns: 1fr;
   }
@@ -279,5 +382,18 @@
 
   .tc-modal {
     padding: 18px;
+  }
+
+  .tc-form-section {
+    padding: 16px;
+  }
+
+  .tc-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .tc-submit-btn,
+  .tc-secondary-btn {
+    width: 100%;
   }
 }

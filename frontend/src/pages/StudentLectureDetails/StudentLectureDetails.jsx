@@ -18,8 +18,11 @@ function StudentLectureDetails() {
   const { user } = useUser();
 
   const lectureId = params.lectureId;
-  const courseId = params.courseId;
-
+  const courseId =
+    typeof params.courseId === "string"
+      ? params.courseId
+      : params.courseId?._id;
+  
   const [activeTab, setActiveTab] = useState("video");
 
   const [lectureTitle, setLectureTitle] = useState("");

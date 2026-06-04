@@ -15,12 +15,14 @@ import { NavLink } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 function TeacherSidebar() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const IMAGE_URL = `http://localhost:4000/uploads/${user?.profileImage}`;
-
+  function handleLogout() {
+    logout();
+  }
   return (
     <>
       {!sidebarOpen && (
@@ -86,7 +88,7 @@ function TeacherSidebar() {
               <span>My Courses</span>
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               to="/teacher/students"
               className={({ isActive }) =>
                 `sidebar-item ${isActive ? "active" : ""}`
@@ -94,12 +96,12 @@ function TeacherSidebar() {
             >
               <Users size={20} />
               <span>Students</span>
-            </NavLink>
+            </NavLink> */}
           </div>
         </div>
 
         <div className="sidebar-bottom">
-          <button className="sidebar-item logout-btn">
+          <button className="sidebar-item logout-btn" onClick={handleLogout}>
             <LogOut size={20} />
             <span>Logout</span>
           </button>

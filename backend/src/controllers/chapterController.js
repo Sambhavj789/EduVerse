@@ -49,5 +49,20 @@ async function getChapters(req, res) {
     return res.send({ success: true, message: "Success", data: allChapters });
 }
 
-module.exports = { createChapter, updateChapter, deleteChapter, getChapters };
+async function getSingleChapter(req, res) {
+    const { chapterId } = req.params;
+    const chapter = await Chapter.findById(chapterId)
+        .populate({
+            path: "module",
+            select: "title course",
+            populate: {
+                path: "course",
+                select: "title"
+            }
+        });
+
+    return res.send({ success: true, message: "Success", data: chapter });
+}
+
+module.exports = { createChapter, updateChapter, deleteChapter, getChapters, getSingleChapter };
 

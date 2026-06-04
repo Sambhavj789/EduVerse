@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../utils/api";
 import { useUser } from "../context/UserContext";
@@ -8,6 +8,19 @@ import { useUser } from "../context/UserContext";
 function Login() {
     const [data, setData] = useState({ email: "", password: "" });
     const { user, setUser } = useUser();
+    const navigate = useNavigate();
+
+    function getRedirectPath(role) {
+        if (role === "teacher") {
+            return "/teacher/dashboard";
+        }
+
+        if (role === "student") {
+            return "/student/dashboard";
+        }
+
+        return "/";
+    }
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -28,7 +41,9 @@ function Login() {
 
             if (response.data?.success) {
                 toast.success("Login Successfully");
-                setUser(response.data?.data);
+                const loggedInUser = response.data?.data;
+                setUser(loggedInUser);
+                navigate(getRedirectPath(loggedInUser?.role), { replace: true });
             }
             else {
                 console.log(response);
@@ -41,6 +56,13 @@ function Login() {
         }
 
     }
+
+    useEffect(() => {
+        if (user) {
+            navigate(getRedirectPath(user.role), { replace: true });
+        }
+    }, [navigate, user]);
+
     return (
         <div className="login-page">
 

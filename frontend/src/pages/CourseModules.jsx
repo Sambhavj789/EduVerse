@@ -11,10 +11,25 @@ function CourseModules() {
   const navigate = useNavigate();
   const [moduleTitle, setModuleTitle] = useState("");
   const [modules, setModules] = useState([]);
+  const [courseTitle, setCourseTitle] = useState("");
+
   async function getModules() {
-    const response = await api.get(`/modules/${courseId}`);
-    if (response.data?.success) {
-      setModules(response.data?.data);
+    try {
+      const [modulesResponse, courseResponse] = await Promise.all([
+        api.get(`/modules/${courseId}`),
+        api.get(`/course/${courseId}`),
+      ]);
+
+      if (modulesResponse.data?.success) {
+        setModules(modulesResponse.data?.data);
+      }
+
+      if (courseResponse.data?.success) {
+        setCourseTitle(courseResponse.data?.data?.title || "");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || "Internal Server Error");
     }
   }
 
@@ -46,11 +61,11 @@ function CourseModules() {
       <div className="modules-header">
         <div className="modules-header-content">
           <div className="module-path">
-            <span onClick={() => navigate(-1)}>My Courses</span>
+            <span onClick={() => navigate("/teacher/courses")}>My Courses</span>
 
             <span>{">"}</span>
 
-            <span>{courseId}</span>
+            <span>{courseTitle || "Course"}</span>
           </div>
 
           <h1>My Course Modules</h1>

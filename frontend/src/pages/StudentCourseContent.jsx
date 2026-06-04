@@ -30,7 +30,10 @@ function StudentCourseContent() {
     try {
       const response = await api.get(`/modules/single-module/${moduleId}`);
       if (response.data?.success) {
-        setCourseId(response.data?.data?.course);
+        const moduleCourse = response.data?.data?.course;
+        setCourseId(
+          typeof moduleCourse === "string" ? moduleCourse : moduleCourse?._id,
+        );
         setChapters(response.data?.data?.chapters);
         setModuleData(response.data?.data);
       }

@@ -7,6 +7,7 @@ const {
   getSingleCourse,
   deleteCourse,
   getTeacherCourses,
+  getTeacherDashboard,
   getStudentJoinedCourses,
   isStudentJoined,
 } = require("../controllers/courseController");
@@ -52,6 +53,13 @@ router.get(
   asyncHandler(authMiddleware),
   asyncHandler(teacherProtectedMiddleware),
   getTeacherCourses,
+);
+
+router.get(
+  "/teacher-dashboard/:teacherId",
+  asyncHandler(authMiddleware),
+  asyncHandler(teacherProtectedMiddleware),
+  getTeacherDashboard,
 );
 
 router.get(
