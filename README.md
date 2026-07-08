@@ -316,12 +316,6 @@ npm run lint
 
 ---
 
-## 📸 Screenshots
-
-> Add screenshots of the app here once available.
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
